@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Therapist Register</title>
+    </head>
+    <body>
+        <form action="{% url 'therapist-register' %}" method="post">
+            {% csrf_token %}
+
+            <input type="text", name="username", placeholder="Username">
+            <input type="password", name="password", placeholder="Password">
+            <input type="text", name="name", placeholder="Name">
+            <input type="text", name="mobilenumber", placeholder="MobNum">
+            <input type="submit", value="Register">
+           
+        </form>
+    </body>
+
+</html>
