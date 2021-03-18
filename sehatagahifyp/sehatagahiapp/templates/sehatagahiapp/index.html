@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Index</title>
+    </head>
+    <body>
+        <h1>My Users</h1>
+        {% for user in my_users %}
+        <li>{{ user.username }} and {{user.id}} and {{therapist.mobile_no}} and {{user.is_therapist}}</li>
+        {% empty %}
+        <li>No User.</li>
+        {% endfor %}
+
+        <h1>My Users</h1>
+        {% for therapist in therapists %}
+        <li> {{therapist.mobile_no}} and {{therapist.name}}</li>
+        {% empty %}
+        <li>No User.</li>
+        {% endfor %}
+    </body>
+</html>
