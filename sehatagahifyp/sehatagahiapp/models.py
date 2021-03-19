@@ -11,7 +11,7 @@ class User(AbstractUser):
 
 
 class Therapist(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=64)
     email = models.CharField(max_length=64, null = True)
     mobile_no = models.CharField(max_length=11)
