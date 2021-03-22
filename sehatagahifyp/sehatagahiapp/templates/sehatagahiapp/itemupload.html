@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+    {% if request.user.is_authenticated %}
+     <div>
+<form action="{% url 'itemupload' %}" method="post"enctype="multipart/form-data">
+{% csrf_token %}
+{{form.as_p}}
+<button>Upload</button>
+</form>
+</div>
+<div>
+    {% for x in all %}
+        <h3 class="text-center mt-2 mb-2">{{x.caption}}</h3>
+        <video class="embed-responsive embed-responsive-16by9" controls="controls" >
+            <source src="{{x.FilePath.url}}" type="video/mp4" />
+        </video>
+    {% endfor %}
+
+</div>
+
+     {% endif %}
+
+</body>
+</html>

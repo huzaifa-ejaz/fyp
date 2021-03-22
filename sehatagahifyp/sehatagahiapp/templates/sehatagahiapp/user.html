@@ -6,11 +6,11 @@
     <body>
         <h1>Welcome, {{ request.user.username }}</h1>
         <ul>
-            <li>Name: {{ therapist.name }}</li>
-            <li>Mobile Number: {{ therapist.mobile_no }}</li>
+            <li>Name: {{ therapist.Name }}</li>
+            <li>Mobile Number: {{ therapist.MobileNumber }}</li>
         </ul>
     
         <a href="{% url 'logout' %}">Log Out</a>
-    
+        <a href="{% url 'itemupload' %}">Add a New Task</a>
     </body>
 </html>
