@@ -8,6 +8,15 @@ class User(AbstractUser):
     is_therapist = models.BooleanField('therapist status', default=False)
     is_patient = models.BooleanField('patient status', default=False)
 
+    def  getTherapist(self):
+        if  self.is_therapist:
+            allTherapists = Therapist.objects.all()
+            for therapist in allTherapists:
+                if therapist.user == self:
+                    return therapist
+            return None
+        return None
+
 
 
 class Therapist(models.Model):
@@ -18,22 +27,25 @@ class Therapist(models.Model):
     
     def __str__(self):
         return f"{self.id}: Name: {self.name} Email: {self.email}"
-
-# class Track(models.Model):
-#     name = models.CharField(max_length=64)
     
-# class Patient(models.Model):
-#     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
-#     name = models.CharField(max_length=64)
-#     father_name = models.CharField(max_length=64)
-#     gender = models.CharField(max_length=64)
-#     dob = models.DateField()
-#     mobile_no = models.CharField(max_length=11)
-#     area = models.CharField(max_length=64)
-#     condition_type = models.CharField(max_length=64) #To be seen later
-#     condition_tone = models.CharField(max_length=64) #To be seen later
-#     therapist = models.ForeignKey(Therapist, on_delete=models.SET_NULL, null=True, related_name="patients")
-#     tracks = models.ManyToManyField(Track, blank=True, related_name="patients")
+    def addTrack(self, name):
+        track = Track(name = name, creator = self)
+        track.save()
+        return track
+
+    def viewMyTracks(self):
+        allTracks = Track.objects.all()
+        myTracks = []
+        for track in allTracks:
+            if track.creator == self:
+                myTracks.append(track)
+        return myTracks
+
+class Track(models.Model):
+    name = models.CharField(max_length=64)
+    creator = models.ForeignKey(Therapist, on_delete = models.DO_NOTHING)
+    
+
 
 
 

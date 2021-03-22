@@ -9,6 +9,8 @@
             <li>Name: {{ therapist.name }}</li>
             <li>Mobile Number: {{ therapist.mobile_no }}</li>
         </ul>
+
+        <a href="{% url 'add-track' %}">Add tracks</a>
     
         <a href="{% url 'logout' %}">Log Out</a>
     

@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.models import User
-from .models import Therapist
+from .models import Therapist, Track
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
@@ -23,13 +23,9 @@ def index(request):
     # If no user is signed in, return to login page:
     if not request.user.is_authenticated:
         return HttpResponseRedirect(reverse("therapist-login"))
-    therapists = Therapist.objects.all()
-    t = None
-    for therapist in therapists:
-        if therapist.user == request.user:
-            t = therapist
+    therapist = request.user.getTherapist()
 
-    return render(request, "sehatagahiapp/user.html", {"therapist": t})
+    return render(request, "sehatagahiapp/user.html", {"therapist": therapist})
 
 def therapist_register(request):
     if request.method == 'POST':
@@ -68,5 +64,18 @@ def logout_view(request):
     return render(request, "sehatagahiapp/therapist-login.html", {
                 "message": "Logged Out"
             })
+
+def add_track(request):
+    therapist = request.user.getTherapist()
+    tracks = therapist.viewMyTracks()
+
+    if request.method == 'POST':
+        track_name = request.POST["trackname"]
+        therapist.addTrack(track_name)
+        tracks = therapist.viewMyTracks()
+        return render(request, "sehatagahiapp/add-track.html", {"tracks": tracks})
+    
+    return render(request, "sehatagahiapp/add-track.html", {"tracks": tracks})
+
 
 
