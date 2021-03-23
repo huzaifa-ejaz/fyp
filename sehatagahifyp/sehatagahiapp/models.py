@@ -45,7 +45,7 @@ class Patient_Data(models.Model):
 class Item(models.Model):
     user_ID = models.ForeignKey(Therapist, on_delete=models.SET_NULL, null=True, related_name="Items")
     Name = models.CharField(max_length=64)
-    FilePath = models.FileField(upload_to="Items/%y",validators=[file_size])
+    FilePath = models.FileField(upload_to="Items/",validators=[file_size])
     Type= models.CharField(max_length=64)
 
 class Track(models.Model):
