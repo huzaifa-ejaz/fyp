@@ -1,11 +1,11 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.models import User
-from .models import Therapist, Track
+from .models import Therapist, Item
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
-
+from .forms import Item_form
 
 
 
@@ -31,7 +31,7 @@ def therapist_register(request):
     if request.method == 'POST':
         user = get_user_model().objects.create_user(username = request.POST["username"] , password = request.POST["password"]  , is_therapist = True)
         user.save()
-        t = Therapist(user = user, name = request.POST["name"], mobile_no = request.POST["mobilenumber"] )
+        t = Therapist(user_ID = user, Name = request.POST["name"], MobileNumber = request.POST["mobilenumber"] )
         t.save()
         return HttpResponseRedirect(reverse("therapist-login"))
     return render(request, "sehatagahiapp/register.html")
@@ -65,17 +65,29 @@ def logout_view(request):
                 "message": "Logged Out"
             })
 
-def add_track(request):
-    therapist = request.user.getTherapist()
-    tracks = therapist.viewMyTracks()
+# def add_track(request):
+#     therapist = request.user.getTherapist()
+#     tracks = therapist.viewMyTracks()
 
-    if request.method == 'POST':
-        track_name = request.POST["trackname"]
-        therapist.addTrack(track_name)
-        tracks = therapist.viewMyTracks()
-        return render(request, "sehatagahiapp/add-track.html", {"tracks": tracks})
+#     if request.method == 'POST':
+#         track_name = request.POST["trackname"]
+#         therapist.addTrack(track_name)
+#         tracks = therapist.viewMyTracks()
+#         return render(request, "sehatagahiapp/add-track.html", {"tracks": tracks})
     
-    return render(request, "sehatagahiapp/add-track.html", {"tracks": tracks})
+#     return render(request, "sehatagahiapp/add-track.html", {"tracks": tracks})
 
 
 
+def ItemUpload_view(request):
+    all_Item=Item.objects.all()
+    if request.method=="POST":
+        print("request agai bhai")
+        form=Item_form(user=request.user,data=request.POST,files=request.FILES)
+        if form.is_valid():
+            form.save()
+            print("saved")
+            return HttpResponse("<h1>Uploaded!</h1>")
+    else:
+        form=Item_form(user=request.user)
+    return render(request,'sehatagahiapp/itemupload.html',{"form":form,"all":all_Item})

@@ -13,9 +13,12 @@
 
         <h1>My Users</h1>
         {% for therapist in therapists %}
-        <li> {{therapist.mobile_no}} and {{therapist.name}}</li>
+        <li> {{therapist.MobileNumber}} and {{therapist.Name}}</li>
         {% empty %}
         <li>No User.</li>
         {% endfor %}
+
+
+
     </body>
 </html>
