@@ -31,7 +31,7 @@ def therapist_register(request):
     if request.method == 'POST':
         user = get_user_model().objects.create_user(username = request.POST["username"] , password = request.POST["password"]  , is_therapist = True)
         user.save()
-        t = Therapist(user_ID = user, Name = request.POST["name"], MobileNumber = request.POST["mobilenumber"] )
+        t = Therapist(user = user, Name = request.POST["name"], MobileNumber = request.POST["mobilenumber"] )
         t.save()
         return HttpResponseRedirect(reverse("therapist-login"))
     return render(request, "sehatagahiapp/register.html")
