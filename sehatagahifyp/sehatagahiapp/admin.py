@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from .models import User
-
+from .models import Item
 from sehatagahiapp.models import Therapist
 
 # Define an inline admin descriptor for Employee model
@@ -18,3 +18,4 @@ class UserAdmin(BaseUserAdmin):
 # Register your models here.
 #admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
+admin.site.register(Item)
