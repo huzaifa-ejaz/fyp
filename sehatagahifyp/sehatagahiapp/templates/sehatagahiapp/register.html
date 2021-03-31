@@ -1,19 +1,22 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Therapist Register</title>
-    </head>
-    <body>
-        <form action="{% url 'therapist-register' %}" method="post">
-            {% csrf_token %}
+<head>
+    <title>Therapist Register</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 
-            <input type="text", name="username", placeholder="Username">
-            <input type="password", name="password", placeholder="Password">
-            <input type="text", name="name", placeholder="Name">
-            <input type="text", name="mobilenumber", placeholder="MobNum">
-            <input type="submit", value="Register">
-           
-        </form>
-    </body>
+</head>
+<body>
+{% load crispy_forms_tags %}
+<div class="container border rounded bg-light m-5 p-5 mx-auto">
+    <form action="{% url 'therapist-register' %}" method="post">
+        {% csrf_token %}
+        {{form|crispy}}
+        <input type="submit" value="Register" class="btn btn-primary">
+
+    </form>
+</div>
+</body>
 
 </html>

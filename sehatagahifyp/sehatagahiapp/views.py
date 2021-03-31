@@ -1,11 +1,11 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.models import User
-from .models import Therapist, Item
+from .models import *
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
-from .forms import Item_form
+from .forms import Item_form,Therapist_Register_form
 
 
 
@@ -33,12 +33,17 @@ def index(request):
 
 def therapist_register(request):
     if request.method == 'POST':
-        user = get_user_model().objects.create_user(username = request.POST["username"] , password = request.POST["password"]  , is_therapist = True)
-        user.save()
-        t = Therapist(user_ID = user, Name = request.POST["name"], MobileNumber = request.POST["mobilenumber"] )
-        t.save()
-        return HttpResponseRedirect(reverse("therapist-login"))
-    return render(request, "sehatagahiapp/register.html")
+        form=Therapist_Register_form(request.POST)
+        if form.is_valid():
+            user = get_user_model().objects.create_user(username = form.cleaned_data['Username'] , password = form.cleaned_data['Password']  , is_therapist = True)
+            user.save()
+            t = Therapist(user_ID = user, Name = form.cleaned_data['Name'], MobileNumber = form.cleaned_data['MobileNumber'],WorkEmail=form.cleaned_data['WorkEmail'],SecurityQs1=form.cleaned_data['SecurityQs1'],SecurityQs2=form.cleaned_data['SecurityQs2'] )
+            t.save()
+            return HttpResponseRedirect(reverse("therapist-login"))
+    else:
+        form=Therapist_Register_form()
+
+    return render(request, "sehatagahiapp/register.html",{'form':form})
 
 
 
@@ -71,13 +76,16 @@ def logout_view(request):
 
 def ItemUpload_view(request):
     all_Item=Item.objects.all()
+    therapists = Therapist.objects.all()
     if request.method=="POST":
-        print("request agai bhai")
-        form=Item_form(user=request.user,data=request.POST,files=request.FILES)
+        form=Item_form(request.POST,request.FILES)
         if form.is_valid():
-            form.save()
-            print("saved")
-            return HttpResponse("<h1>Uploaded!</h1>")
+            for t in therapists:
+                if t.user_ID == request.user:
+                    break;
+            I=Item(user_ID=t,Name= form.cleaned_data['Name'],FilePath= form.cleaned_data['FilePath'],Type=form.cleaned_data['Type'])
+            I.save()
+            return HttpResponseRedirect(reverse("item-upload"))
     else:
-        form=Item_form(user=request.user)
+        form=Item_form()
     return render(request,'sehatagahiapp/itemupload.html',{"form":form,"all":all_Item})

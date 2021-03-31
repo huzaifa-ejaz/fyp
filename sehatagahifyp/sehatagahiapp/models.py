@@ -14,9 +14,9 @@ class Therapist(models.Model):
     user_ID = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     Name = models.CharField(max_length=64)
     MobileNumber = models.CharField(max_length=11)
-    WorkEmail = models.CharField(max_length=64, null = True)
-    SecurityQs1 = models.CharField(max_length=64, null=True)
-    SecurityQs2 = models.CharField(max_length=64, null=True)
+    WorkEmail = models.CharField(max_length=64)
+    SecurityQs1 = models.CharField(max_length=64)
+    SecurityQs2 = models.CharField(max_length=64)
     
     def __str__(self):
         return f"{self.id}: Name: {self.name} Email: {self.email}"
@@ -45,7 +45,7 @@ class Patient_Data(models.Model):
 class Item(models.Model):
     user_ID = models.ForeignKey(Therapist, on_delete=models.SET_NULL, null=True, related_name="Items")
     Name = models.CharField(max_length=64)
-    FilePath = models.FileField(upload_to="Items/",validators=[file_size])
+    FilePath = models.FileField(upload_to="Items/")
     Type= models.CharField(max_length=64)
 
 class Track(models.Model):
