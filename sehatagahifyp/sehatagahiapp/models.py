@@ -43,6 +43,14 @@ class Therapist(models.Model):
                 myTracks.append(track)
         return myTracks
     
+    def getMyPatients(self):
+        allPatients = Patient.objects.all()
+        myPatients = []
+        for patient in allPatients:
+            if patient.Therapist == self:
+                myPatients.append(patient)
+        return myPatients
+    
 
 
 

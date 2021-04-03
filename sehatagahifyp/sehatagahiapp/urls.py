@@ -5,10 +5,11 @@ urlpatterns = [
     path("", views.index, name="index"),
     path("therapist-register", views.therapist_register, name="therapist-register"),
     path("logout", views.logout_view, name="logout"),
-    path("therapist-login", views.login_view, name="therapist-login"),
-
-    #path("add-track", views.add_track, name="add-track"),
-    path("item-upload", views.ItemUpload_view, name="itemupload")
+    path("therapist-login", views.loginUser, name="therapist-login"),
+    path("login-options", views.getLoginOptions, name="login-options"),
+    path("item-upload", views.ItemUpload_view, name="itemupload"),
+    path("add-patient", views.addPatient, name="add-patient"),
+    path("therapist-dashboard", views.getTherapistDashboard, name="therapist-dashboard")
 
 ]
 

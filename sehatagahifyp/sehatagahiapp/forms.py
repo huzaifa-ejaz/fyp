@@ -9,3 +9,7 @@ class Item_form(forms.ModelForm):
     class Meta:
         model=Item
         fields=("Name","FilePath","Type")
+
+class LoginForm(forms.Form):
+    username = forms.CharField(label="Username", max_length=60)
+    password = forms.CharField(label="Password", widget = forms.PasswordInput(), max_length=60)
