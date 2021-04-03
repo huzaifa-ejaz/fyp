@@ -7,7 +7,7 @@ urlpatterns = [
     path("logout", views.logout_view, name="logout"),
     path("therapist-login", views.loginUser, name="therapist-login"),
     path("login-options", views.getLoginOptions, name="login-options"),
-    path("item-upload", views.ItemUpload_view, name="itemupload"),
+    path("item-upload", views.ItemUpload_view, name="item-upload"),
     path("add-patient", views.addPatient, name="add-patient"),
     path("therapist-dashboard", views.getTherapistDashboard, name="therapist-dashboard")
 

@@ -1,30 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'sehatagahiapp/dashboard-outline.html' %}
 
-    {% if request.user.is_authenticated %}
-     <div>
-<form action="{% url 'itemupload' %}" method="post"enctype="multipart/form-data">
-{% csrf_token %}
-{{form.as_p}}
-<button>Upload</button>
-</form>
+{% block content %}
+{% if request.user.is_authenticated %}
+{% load crispy_forms_tags %}
+<div class="container border rounded bg-light m-5 p-5 mx-auto">
+    <form action="{% url 'item-upload' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{form|crispy}}
+        <input type="submit" value="Upload" class="btn btn-primary">
+    </form>
 </div>
 <div>
     {% for x in all %}
-        <h3 class="text-center mt-2 mb-2">{{x.caption}}</h3>
-        <video class="embed-responsive embed-responsive-16by9" controls="controls" >
-            <source src="{{x.FilePath.url}}" type="video/mp4" />
-        </video>
+    <h3 class="text-center mt-2 mb-2">{{x.caption}}</h3>
+    <video class="embed-responsive embed-responsive-16by9" controls="controls" >
+        <source src="{{x.FilePath.url}}" type="video/mp4" />
+    </video>
     {% endfor %}
+
+
 
 </div>
 
-     {% endif %}
-
-</body>
-</html>
+{% endif %}
+{% endblock %}

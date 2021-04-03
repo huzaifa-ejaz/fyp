@@ -1,19 +1,13 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Therapist Register</title>
-    </head>
-    <body>
-        <form action="{% url 'therapist-register' %}" method="post">
-            {% csrf_token %}
+{% extends 'sehatagahiapp/base-index.html' %}
 
-            <input type="text", name="username", placeholder="Username">
-            <input type="password", name="password", placeholder="Password">
-            <input type="text", name="name", placeholder="Name">
-            <input type="text", name="mobilenumber", placeholder="MobNum">
-            <input type="submit", value="Register">
-           
-        </form>
-    </body>
+{% block content %}
+{% load crispy_forms_tags %}
+<div class="container border rounded bg-light m-5 p-5 mx-auto">
+    <form action="{% url 'therapist-register' %}" method="post">
+        {% csrf_token %}
+        {{form|crispy}}
+        <input type="submit" value="Register" class="btn btn-primary">
 
-</html>
+    </form>
+</div>
+{% endblock %}
