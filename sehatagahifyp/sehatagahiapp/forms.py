@@ -12,7 +12,7 @@ class Item_form(forms.Form):
         cleaned_data = super().clean()
         Type = cleaned_data.get("Type")
         File = cleaned_data.get("FilePath").name
-        if not (File.endswith('.mp4') and Type == '1' or File.endswith('.pdf') and Type == '2' or File.endswith('.png') and Type == '3'):
+        if not (File.endswith('.mp4') and Type == '1' or File.endswith('.pdf') and Type == '3' or File.endswith('.png') and Type == '2'):
             self.add_error('Type', 'Please select .mp4 for Video, .png for Image or .pdf for PDF')
 
 
