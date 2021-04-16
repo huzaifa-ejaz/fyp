@@ -1,0 +1,11 @@
+{% extends 'sehatagahiapp/patient-dashboard-outline.html' %}
+
+{% block sidebar %}
+              {% for link, option in sidebarOptions.items %}
+              <li class="nav-item"><a href="{% url link %}" class="text-reset text-decoration-none">{{option}}</a></li>
+              {% endfor %}
+{% endblock %}
+
+{% block content %}
+<p>{{ patient.Name }}, {{ patient.Gender }}</p>
+{% endblock %}

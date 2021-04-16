@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from .validators import file_size
+from datetime import datetime, date
 
 
 # Create your models here.
@@ -14,6 +15,15 @@ class User(AbstractUser):
             for therapist in allTherapists:
                 if therapist.user == self:
                     return therapist
+            return None
+        return None
+    
+    def  getPatient(self):
+        if  self.is_patient:
+            allPatients = Patient.objects.all()
+            for patient in allPatients:
+                if patient.user_ID == self:
+                    return patient
             return None
         return None
 
@@ -65,6 +75,8 @@ class Patient(models.Model):
     MobileNumber = models.CharField(max_length=11)
     ConditionTags = models.CharField(max_length=64)
     Therapist = models.ForeignKey(Therapist, on_delete=models.SET_NULL, null=True, related_name="Patients")
+
+
 
 class PatientLog(models.Model):
     user_ID = models.ForeignKey(Patient, on_delete=models.SET_NULL, null=True, related_name="Log")

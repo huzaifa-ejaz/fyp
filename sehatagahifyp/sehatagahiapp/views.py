@@ -1,11 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.models import User
 from .models import *
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
-from .forms import Item_form, LoginForm, Therapist_Register_form
+from .forms import Item_form, LoginForm, Therapist_Register_form, PatientRegisterForm, PatientEditForm, PatientPasswordChangeForm
 
 
 
@@ -13,7 +13,18 @@ from .forms import Item_form, LoginForm, Therapist_Register_form
 
 therapistOptions = {
     'add-patient' : "Add New Patient",
-    'item-upload' : "Upload an Item"
+    'item-upload' : "Upload an Item",
+    'therapist-dashboard' : "Return to Dashboard"
+}
+
+therapistPatientOptions = {
+    'edit-patient' : "Edit Patient Details",
+    'therapist-patient-page' : "Return to Patient's Page",
+    'change-patient-password' : "Change Patient's Password"
+}
+
+patientOptions = {
+    'add-log' : "اہم واقعہ نوٹ کریں"
 }
 
 # Create your views here.
@@ -69,11 +80,13 @@ def therapist_register(request):
 
 
 def logout_view(request):
+
     logout(request)
     form = LoginForm()
-    return render(request, "sehatagahiapp/therapist-login.html", {
+    return render(request, "sehatagahiapp/login.html", {
                 "message": "Logged Out",
-                "form" : form
+                "form" : form,
+                "userType" : "User"
             })
 
 
@@ -102,7 +115,7 @@ def ItemUpload_view(request):
 def getLoginOptions(request):
     return render(request, 'sehatagahiapp/login-options.html')
 
-def loginUser(request):
+def loginUser(request, userType):
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
@@ -122,10 +135,11 @@ def loginUser(request):
                 if user.is_therapist:
                     return HttpResponseRedirect(reverse("therapist-dashboard"))
                 elif user.is_patient:
-                    return HttpResponseRedirect(reverse("index"))
+                    return HttpResponseRedirect(reverse("patient-dashboard"))
             # Otherwise, return login page again with new context
             else:
-                return render(request, "sehatagahiapp/therapist-login.html", {
+                return render(request, "sehatagahiapp/login.html", {
+                    "userType" : userType,
                     "message": "Invalid Credentials",
                     "form" : form
                 })
@@ -136,7 +150,10 @@ def loginUser(request):
     else:
         form = LoginForm()
 
-    return render(request, 'sehatagahiapp/therapist-login.html', {'form': form})
+    return render(request, 'sehatagahiapp/login.html', {
+        'form': form,
+        'userType': userType
+        })
 
 def getTherapistDashboard(request):
     user = request.user
@@ -152,4 +169,140 @@ def getTherapistDashboard(request):
     return render(request, "sehatagahiapp/therapist-dashboard.html", context)
 
 def addPatient(request):
-    return HttpResponse("Add a patient: Work on Page in progress!")
+    therapist = request.user.getTherapist()
+    if request.method == 'POST':
+        form = PatientRegisterForm(request.POST)
+        if form.is_valid():
+            user = get_user_model().objects.create_user(username = form.cleaned_data['username'] , password = form.cleaned_data['password']  , is_patient = True)
+            user.save()
+            patient = Patient(
+                user_ID = user, 
+                Name = form.cleaned_data['name'], 
+                FatherName = form.cleaned_data['fatherName'],
+                DOB=form.cleaned_data['dob'],
+                Area=form.cleaned_data['area'],
+                Gender=form.cleaned_data['gender'],
+                MobileNumber = form.cleaned_data['mobileNumber'],
+                ConditionTags = form.cleaned_data['condition'],
+                Therapist = therapist )
+            patient.save()
+            return HttpResponseRedirect(reverse('therapist-dashboard'))
+    else:
+        form = PatientRegisterForm()
+    context = {
+        'heading' : 'Create a Patient',
+        'name': therapist.Name,
+        'sidebarOptions' : therapistOptions,
+        'form' : form
+    }
+    return render(request, "sehatagahiapp/patient-register.html",context)
+
+def getTherapistPatientPage(request,pk):
+    therapist = request.user.getTherapist()
+    patient = Patient.objects.get(pk=pk)
+    context = {
+        'heading' : patient.Name,
+        'sidebarOptions' : therapistPatientOptions,
+        'name' : therapist.Name,
+        'patient' : patient
+    }
+    return render(request, "sehatagahiapp/therapist-patient-page.html", context)
+
+def editPatient(request,pk):
+    therapist = request.user.getTherapist()
+    patient = get_object_or_404(Patient, pk=pk)
+
+    if request.method == 'POST':
+        form = PatientEditForm(request.POST)
+        if form.is_valid():
+            patient.Name = form.cleaned_data['name']
+            patient.FatherName = form.cleaned_data['fatherName']
+            patient.DOB = form.cleaned_data['dob']
+            patient.Area = form.cleaned_data['area']
+            patient.Gender = form.cleaned_data['gender']
+            patient.MobileNumber = form.cleaned_data['mobileNumber']
+            patient.ConditionTags = form.cleaned_data['condition']
+            
+            patient.save()
+
+            context = {
+                'form' : form,
+                'name' : therapist.Name,
+                'heading': 'Edit Patient Details',
+                'sidebarOptions' : therapistPatientOptions,
+                'patient': patient,
+                'message' : "Patient Details has been successfully updated!"
+            }
+
+            return render(request,'sehatagahiapp/edit-patient.html', context)
+    else:
+        form = PatientEditForm(initial = {
+            'name': patient.Name,
+            'fatherName' : patient.FatherName,
+            'dob' : patient.DOB,
+            'area' : patient.Area,
+            'gender' : patient.Gender,
+            'mobileNumber' : patient.MobileNumber,
+            'condition' : patient.ConditionTags
+
+        })
+    
+    context = {
+        'form' : form,
+        'name' : therapist.Name,
+        'heading': 'Edit Patient Details',
+        'patient' : patient,
+        'sidebarOptions' : therapistPatientOptions
+    }
+
+    return render(request, 'sehatagahiapp/edit-patient.html',context)
+
+def changePatientPassword(request,pk):
+    therapist = request.user.getTherapist()
+    patient = get_object_or_404(Patient,pk=pk)
+    patientUser = User.objects.get(id = patient.user_ID.id)
+
+    if request.method == 'POST':
+       form =  PatientPasswordChangeForm(request.POST)
+       if form.is_valid():
+           patientUser.set_password(form.cleaned_data['password'])
+           patientUser.save()
+           context = {
+               'form' : form,
+               'name' : therapist.Name,
+               'heading': 'Change Patient\'s Password',
+               'patient' : patient,
+               'sidebarOptions' : therapistPatientOptions,
+               'message' : 'Patient\'s password has been changed!'
+           }
+           return render (request,'sehatagahiapp/patient-password-change.html',context)
+    else:
+        form  = PatientPasswordChangeForm(initial = {
+            'username' : patientUser.username
+        })
+    context = {
+        'form' : form,
+        'name' : therapist.Name,
+        'heading': 'Change Patient\'s Password',
+        'patient' : patient,
+        'sidebarOptions' : therapistPatientOptions
+    }
+    return render (request,'sehatagahiapp/patient-password-change.html',context)
+   
+def getPatientDashboard(request):
+    user = request.user
+    patient = user.getPatient()
+    context = {
+        "name": patient.Name,
+        "sidebarOptions" : patientOptions,
+        "heading" : "میرا ٹریک",
+        "patient" : patient
+    }
+                    
+    return render(request, "sehatagahiapp/patient-dashboard.html", context)
+
+def addLog(request):
+    return HttpResponse("Work in progress on this page!")
+
+    
+            

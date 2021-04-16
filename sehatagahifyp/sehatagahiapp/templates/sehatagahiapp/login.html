@@ -15,11 +15,12 @@
         <div class="col-4">
             
             <div class="container bg-light p-5 centered">
-                <h3>Therapist Login</h3>
+                <h3>{{ userType }}</h3>
+                <h4>Log In</h4>
                 {% if message %}
                 <div class="alert alert-danger">{{ message }}</div>
                 {% endif %}
-                <form action="{% url 'therapist-login' %}" method="post">
+                <form action="{% url 'login' userType %}" method="post">
                     {% csrf_token %}
                     {{ form|crispy }}
                     <button type="submit" class="btn btn-primary mt-3">Log In</button>

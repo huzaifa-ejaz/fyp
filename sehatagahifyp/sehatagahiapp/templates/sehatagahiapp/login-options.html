@@ -10,8 +10,8 @@
         <div class="col-4"></div>
         <div class="col-4">
             <div class="container bg-light p-5 centered">
-                <center><button class="btn btn-outline-success max-width">Caregiver Log In</button></center>
-                <center><button class="btn btn-outline-primary mt-3"><a href="{% url 'therapist-login' %}" class="text-reset text-decoration-none">Therapist Log In</a></button></center>
+                <center><button class="btn btn-outline-success max-width"><a href="{% url 'login' 'Caregiver' %}" class="text-reset text-decoration-none">Caregiver Log In</a></button></center>
+                <center><button class="btn btn-outline-primary mt-3"><a href="{% url 'login' 'Therapist' %}" class="text-reset text-decoration-none">Therapist Log In</a></button></center>
             </div>
         </div>
         <div class="col-4"></div>

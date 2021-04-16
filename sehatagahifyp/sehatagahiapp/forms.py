@@ -41,3 +41,51 @@ class Therapist_Register_form(forms.Form):
 class LoginForm(forms.Form):
     username = forms.CharField(label="Username", max_length=60)
     password = forms.CharField(label="Password", widget = forms.PasswordInput(), max_length=60)
+
+class PatientRegisterForm(forms.Form):
+    name = forms.CharField(label='Full Name',max_length=25, validators=[validator.RegexValidator(regex=r'^[a-zA-Z][a-zA-Z ]+$')])
+    fatherName = forms.CharField(label='Father\'s Name',max_length=25, validators=[validator.RegexValidator(regex=r'^[a-zA-Z][a-zA-Z ]+$')])
+    dob = forms.DateField(
+        label = 'Date of Birth (dd/mm/yyyy)',
+        widget=forms.DateInput(format='%d/%m/%Y'),
+        input_formats=('%d/%m/%Y', )
+        )
+    gender = forms.ChoiceField(label='Gender', choices = ((1,'Male'),(2,'Female')))
+    condition = forms.CharField(label='Condition', max_length=250)
+    area = forms.CharField(label='Area/City', max_length=100)
+    mobileNumber = forms.CharField(label='Caregiver Mobile Number 03xxxxxxxxx', max_length=11,validators=[validator.RegexValidator(regex=r'^[0][3][0-9]+$')])
+    username=forms.CharField(label='User Name',max_length=25,validators=[username_val])
+    password = forms.CharField(label='Password',max_length=10, widget=forms.PasswordInput,validators=[validator.MinLengthValidator(limit_value=6)])
+    passwordRe= forms.CharField(label='Re-enter Password',max_length=10, widget=forms.PasswordInput,validators=[validator.MinLengthValidator(limit_value=6)])
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get("password")
+        passwordre = cleaned_data.get("passwordRe")
+        if password!=passwordre:
+            self.add_error('passwordRe', 'The password does not match')
+
+class PatientEditForm(forms.Form):
+    name = forms.CharField(label='Full Name',max_length=25, validators=[validator.RegexValidator(regex=r'^[a-zA-Z][a-zA-Z ]+$')])
+    fatherName = forms.CharField(label='Father\'s Name',max_length=25, validators=[validator.RegexValidator(regex=r'^[a-zA-Z][a-zA-Z ]+$')])
+    dob = forms.DateField(
+        label = 'Date of Birth (dd/mm/yyyy)',
+        widget=forms.DateInput(format='%d/%m/%Y'),
+        input_formats=('%d/%m/%Y', )
+        )
+    gender = forms.ChoiceField(label='Gender', choices = ((1,'Male'),(2,'Female')))
+    condition = forms.CharField(label='Condition', max_length=250)
+    area = forms.CharField(label='Area/City', max_length=100)
+    mobileNumber = forms.CharField(label='Caregiver Mobile Number 03xxxxxxxxx', max_length=11,validators=[validator.RegexValidator(regex=r'^[0][3][0-9]+$')])
+
+class PatientPasswordChangeForm(forms.Form):
+    username = forms.CharField(label = 'User Name', widget = forms.TextInput(attrs={'readonly':'readonly'}))
+    password = forms.CharField(label='Password',max_length=10, widget=forms.PasswordInput,validators=[validator.MinLengthValidator(limit_value=6)])
+    passwordRe= forms.CharField(label='Re-enter Password',max_length=10, widget=forms.PasswordInput,validators=[validator.MinLengthValidator(limit_value=6)])
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get("password")
+        passwordre = cleaned_data.get("passwordRe")
+        if password!=passwordre:
+            self.add_error('passwordRe', 'The password does not match')

@@ -16,15 +16,13 @@
         <div class="container-fluid">
         <a class="navbar-brand" href="{% url 'therapist-dashboard' %}">Sehat Agahi</a>
         <div class="d-flex flex-row">
-        {% block notification %}
-        {% endblock %}
         <div class="dropdown px-2">
             <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
                <i class="fas fa-user"></i> {{ name }}
             </a>
           
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-              <li><a class="dropdown-item" href="{% url 'logout' %}">Log Out</a></li>
+              <li><a class="dropdown-item" href="{% url 'logout' %}">لاگ آؤٹ کریں</a></li>
             </ul>
           </div>
         </div>
