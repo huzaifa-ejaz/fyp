@@ -4,12 +4,13 @@ from django.contrib.auth.models import User
 from .models import *
 from django.contrib.auth import get_user_model
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from .forms import Item_form, LoginForm, Therapist_Register_form, PatientRegisterForm, PatientEditForm, PatientPasswordChangeForm
 
 
 
-
+# The sidebar options defined in a dictionary with the URL name as the key
 
 therapistOptions = {
     'add-patient' : "Add New Patient",
@@ -129,13 +130,21 @@ def loginUser(request, userType):
             # Check if username and password are correct, returning User object if so
             user = authenticate(request, username=username, password=password)
 
-            # If user object is returned, log in and route to index page:
+            # If user object is returned, log in and route to user dashboard page ensuring the user has come from the right URL:
             if user:
-                login(request, user)
-                if user.is_therapist:
+                if userType == 'Therapist' and user.is_therapist:
+                    login(request, user)
                     return HttpResponseRedirect(reverse("therapist-dashboard"))
-                elif user.is_patient:
+                elif  userType == 'Caregiver' and user.is_patient:
+                    login(request, user)
                     return HttpResponseRedirect(reverse("patient-dashboard"))
+                else:
+                    return render(request, "sehatagahiapp/login.html", {
+                    "userType" : userType,
+                    "message": "Invalid Login!",
+                    "form" : form
+                })
+
             # Otherwise, return login page again with new context
             else:
                 return render(request, "sehatagahiapp/login.html", {
@@ -143,7 +152,6 @@ def loginUser(request, userType):
                     "message": "Invalid Credentials",
                     "form" : form
                 })
-            # redirect to a new URL:
             
 
     # if a GET (or any other method) we'll create a blank form
@@ -155,6 +163,7 @@ def loginUser(request, userType):
         'userType': userType
         })
 
+@login_required
 def getTherapistDashboard(request):
     user = request.user
     therapist = user.getTherapist()
@@ -168,6 +177,7 @@ def getTherapistDashboard(request):
                     
     return render(request, "sehatagahiapp/therapist-dashboard.html", context)
 
+@login_required
 def addPatient(request):
     therapist = request.user.getTherapist()
     if request.method == 'POST':
@@ -197,6 +207,7 @@ def addPatient(request):
     }
     return render(request, "sehatagahiapp/patient-register.html",context)
 
+@login_required
 def getTherapistPatientPage(request,pk):
     therapist = request.user.getTherapist()
     patient = Patient.objects.get(pk=pk)
@@ -208,6 +219,7 @@ def getTherapistPatientPage(request,pk):
     }
     return render(request, "sehatagahiapp/therapist-patient-page.html", context)
 
+@login_required
 def editPatient(request,pk):
     therapist = request.user.getTherapist()
     patient = get_object_or_404(Patient, pk=pk)
@@ -257,6 +269,7 @@ def editPatient(request,pk):
 
     return render(request, 'sehatagahiapp/edit-patient.html',context)
 
+@login_required
 def changePatientPassword(request,pk):
     therapist = request.user.getTherapist()
     patient = get_object_or_404(Patient,pk=pk)
@@ -289,6 +302,7 @@ def changePatientPassword(request,pk):
     }
     return render (request,'sehatagahiapp/patient-password-change.html',context)
    
+@login_required
 def getPatientDashboard(request):
     user = request.user
     patient = user.getPatient()
@@ -301,6 +315,7 @@ def getPatientDashboard(request):
                     
     return render(request, "sehatagahiapp/patient-dashboard.html", context)
 
+@login_required
 def addLog(request):
     return HttpResponse("Work in progress on this page!")
 

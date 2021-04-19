@@ -132,3 +132,5 @@ AUTH_USER_MODEL='sehatagahiapp.User'
 DATE_INPUT_FORMATS = [
     '%d-%m-%Y'
 ]
+
+LOGIN_URL = 'login-options'
