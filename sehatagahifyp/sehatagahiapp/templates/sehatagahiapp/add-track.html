@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Therapist Register</title>
+    </head>
+    <body>
+        <form action="{% url 'add-track' %}" method="post">
+            {% csrf_token %}
+
+            <input type="text", name="trackname", placeholder="Name of the track">
+            <input type="submit", value="Add Track">
+           
+        </form>
+        <ul>
+        {% for track in tracks %}
+        <li>{{track.name}}</li>
+        {% endfor %}
+        </ul>
+    </body>
+
+</html>
