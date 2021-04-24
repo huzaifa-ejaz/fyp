@@ -16,15 +16,13 @@
         <div class="container-fluid">
         <a class="navbar-brand" href="{% url 'therapist-dashboard' %}">Sehat Agahi</a>
         <div class="d-flex flex-row">
-        {% block notification %}
-        {% endblock %}
         <div class="dropdown px-2">
             <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
                <i class="fas fa-user"></i> {{ name }}
             </a>
           
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-              <li><a class="dropdown-item" href="{% url 'logout' %}">Log Out</a></li>
+              <li><a class="dropdown-item" href="{% url 'logout' %}">لاگ آؤٹ کریں</a></li>
             </ul>
           </div>
         </div>
@@ -42,7 +40,7 @@
           </ul>
         </div>
     </nav>
-    <div class="col-sm-12 col-lg-10">
+    <div class="col-sm-12 col-lg-5">
         <h3 class="p-3">{{ heading }}</h3>
         {% block content %}
         {% endblock %}
@@ -59,12 +57,12 @@
     <!-- Optional JavaScript; choose one of the two! -->
 
     <!-- Option 1: Bootstrap Bundle with Popper -->
-   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
 
     <!-- Option 2: Separate Popper and Bootstrap JS -->
-<!--
+    <!--
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js" integrity="sha384-SR1sx49pcuLnqZUnnPwx6FCym0wLsk5JZuNx2bPPENzswTNFaQU1RDvt3wT4gWFG" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js" integrity="sha384-j0CNLUeiqtyaRmlzUHCPZ+Gy5fQu0dQ6eZ/xAww941Ai1SxSY+0EQqNXNE6DZiVc" crossorigin="anonymous"></script>
--->
- </body>
+    -->
+  </body>
 </html>

@@ -1,0 +1,17 @@
+{% extends 'sehatagahiapp/dashboard-outline.html' %}
+
+{% block notification %}
+        <button type="button" class="btn btn-primary">
+            <i class="fas fa-bell px-2"></i><span class="badge bg-secondary">4</span>
+        </button>
+{% endblock %}
+
+{% block sidebar %}
+              {% for link, option in sidebarOptions.items %}
+              <li class="nav-item"><a href="{% url link patient.pk %}" class="text-reset text-decoration-none">{{option}}</a></li>
+              {% endfor %}
+{% endblock %}
+
+{% block content %}
+
+{% endblock %}

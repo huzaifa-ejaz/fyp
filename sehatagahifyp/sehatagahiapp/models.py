@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from .validators import file_size
+from datetime import datetime, date
 
 
 # Create your models here.
@@ -8,12 +9,22 @@ class User(AbstractUser):
     is_therapist = models.BooleanField('therapist status', default=False)
     is_patient = models.BooleanField('patient status', default=False)
 
+
     def  getTherapist(self):
         if  self.is_therapist:
             allTherapists = Therapist.objects.all()
             for therapist in allTherapists:
                 if therapist.user == self:
                     return therapist
+            return None
+        return None
+
+    def  getPatient(self):
+        if  self.is_patient:
+            allPatients = Patient.objects.all()
+            for patient in allPatients:
+                if patient.user_ID == self:
+                    return patient
             return None
         return None
 
@@ -29,7 +40,7 @@ class Therapist(models.Model):
     
     def __str__(self):
         return f"{self.id}: Name: {self.name} Email: {self.email}"
-    
+
     def addTrack(self, name):
         track = Track(name = name, creator = self)
         track.save()
@@ -42,7 +53,7 @@ class Therapist(models.Model):
             if track.creator == self:
                 myTracks.append(track)
         return myTracks
-    
+
     def getMyPatients(self):
         allPatients = Patient.objects.all()
         myPatients = []
@@ -50,7 +61,7 @@ class Therapist(models.Model):
             if patient.Therapist == self:
                 myPatients.append(patient)
         return myPatients
-    
+
 
 
 
@@ -65,6 +76,8 @@ class Patient(models.Model):
     MobileNumber = models.CharField(max_length=11)
     ConditionTags = models.CharField(max_length=64)
     Therapist = models.ForeignKey(Therapist, on_delete=models.SET_NULL, null=True, related_name="Patients")
+
+
 
 class PatientLog(models.Model):
     user_ID = models.ForeignKey(Patient, on_delete=models.SET_NULL, null=True, related_name="Log")

@@ -9,13 +9,12 @@
 {% block content %}
 {% if request.user.is_authenticated %}
 {% load crispy_forms_tags %}
-<div class="border rounded bg-light p-5 m-5">
-    <form action="{% url 'item-upload' %}" method="post" enctype="multipart/form-data">
+<div class="container border rounded bg-light m-5 p-5 mx-auto">
+    <form action="{% url 'add-patient' %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{form|crispy}}
-        <input type="submit" value="Upload" class="btn btn-primary mt-5">
+        <input type="submit" value="Create Patient" class="btn btn-primary">
     </form>
 </div>
-
 {% endif %}
 {% endblock %}
