@@ -8,10 +8,19 @@ class User(AbstractUser):
     is_therapist = models.BooleanField('therapist status', default=False)
     is_patient = models.BooleanField('patient status', default=False)
 
+    def  getTherapist(self):
+        if  self.is_therapist:
+            allTherapists = Therapist.objects.all()
+            for therapist in allTherapists:
+                if therapist.user == self:
+                    return therapist
+            return None
+        return None
+
 
 
 class Therapist(models.Model):
-    user_ID = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     Name = models.CharField(max_length=64)
     MobileNumber = models.CharField(max_length=11)
     WorkEmail = models.CharField(max_length=64)
@@ -20,6 +29,30 @@ class Therapist(models.Model):
     
     def __str__(self):
         return f"{self.id}: Name: {self.name} Email: {self.email}"
+    
+    def addTrack(self, name):
+        track = Track(name = name, creator = self)
+        track.save()
+        return track
+
+    def viewMyTracks(self):
+        allTracks = Track.objects.all()
+        myTracks = []
+        for track in allTracks:
+            if track.creator == self:
+                myTracks.append(track)
+        return myTracks
+    
+    def getMyPatients(self):
+        allPatients = Patient.objects.all()
+        myPatients = []
+        for patient in allPatients:
+            if patient.Therapist == self:
+                myPatients.append(patient)
+        return myPatients
+    
+
+
 
 
 class Patient(models.Model):
@@ -47,6 +80,7 @@ class Item(models.Model):
     Name = models.CharField(max_length=64)
     FilePath = models.FileField(upload_to="Items/")
     Type= models.CharField(max_length=64)
+
 
 class Track(models.Model):
     user_ID = models.ForeignKey(Therapist, on_delete=models.SET_NULL, null=True, related_name="Track")

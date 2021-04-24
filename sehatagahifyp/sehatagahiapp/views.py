@@ -5,12 +5,17 @@ from .models import *
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
-from .forms import Item_form,Therapist_Register_form
+from .forms import *
+import os
 
 
 
-
-
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+therapistOptions = {
+    'add-patient' : "Add New Patient",
+    'item-upload' : "Upload an Item",
+    'view-item' : "View/Edit Item"
+}
 
 # Create your views here.
 
@@ -22,14 +27,10 @@ from .forms import Item_form,Therapist_Register_form
 def index(request):
     # If no user is signed in, return to login page:
     if not request.user.is_authenticated:
-        return HttpResponseRedirect(reverse("therapist-login"))
-    therapists = Therapist.objects.all()
-    t = None
-    for therapist in therapists:
-        if therapist.user_ID == request.user:
-            t = therapist
+        return render(request, "sehatagahiapp/base-index.html")
+    therapist = request.user.getTherapist()
 
-    return render(request, "sehatagahiapp/user.html", {"therapist": t})
+    return render(request, "sehatagahiapp/base-index.html")
 
 def therapist_register(request):
     if request.method == 'POST':
@@ -37,7 +38,7 @@ def therapist_register(request):
         if form.is_valid():
             user = get_user_model().objects.create_user(username = form.cleaned_data['Username'] , password = form.cleaned_data['Password']  , is_therapist = True)
             user.save()
-            t = Therapist(user_ID = user, Name = form.cleaned_data['Name'], MobileNumber = form.cleaned_data['MobileNumber'],WorkEmail=form.cleaned_data['WorkEmail'],SecurityQs1=form.cleaned_data['SecurityQs1'],SecurityQs2=form.cleaned_data['SecurityQs2'] )
+            t = Therapist(user = user, Name = form.cleaned_data['Name'], MobileNumber = form.cleaned_data['MobileNumber'],WorkEmail=form.cleaned_data['WorkEmail'],SecurityQs1=form.cleaned_data['SecurityQs1'],SecurityQs2=form.cleaned_data['SecurityQs2'] )
             t.save()
             return HttpResponseRedirect(reverse("therapist-login"))
     else:
@@ -47,45 +48,189 @@ def therapist_register(request):
 
 
 
-def login_view(request):
-    if request.method == "POST":
-        # Accessing username and password from form data
-        username = request.POST["username"]
-        password = request.POST["password"]
+# def login_view(request):
+#     if request.method == "POST":
+#         # Accessing username and password from form data
+#         username = request.POST["username"]
+#         password = request.POST["password"]
 
-        # Check if username and password are correct, returning User object if so
-        user = authenticate(request, username=username, password=password)
+#         # Check if username and password are correct, returning User object if so
+#         user = authenticate(request, username=username, password=password)
 
-        # If user object is returned, log in and route to index page:
-        if user:
-            login(request, user)
-            return HttpResponseRedirect(reverse("index"))
-        # Otherwise, return login page again with new context
-        else:
-            return render(request, "sehatagahiapp/therapist-login.html", {
-                "message": "Invalid Credentials"
-            })
-    return render(request, "sehatagahiapp/therapist-login.html")
+#         # If user object is returned, log in and route to index page:
+#         if user:
+#             login(request, user)
+#             return HttpResponseRedirect(reverse("index"))
+#         # Otherwise, return login page again with new context
+#         else:
+#             return render(request, "sehatagahiapp/therapist-login.html", {
+#                 "message": "Invalid Credentials"
+#             })
+#     return render(request, "sehatagahiapp/therapist-login.html")
 
 
 def logout_view(request):
     logout(request)
+    form = LoginForm()
     return render(request, "sehatagahiapp/therapist-login.html", {
-                "message": "Logged Out"
+                "message": "Logged Out",
+                "form" : form
             })
+
+
 
 def ItemUpload_view(request):
     all_Item=Item.objects.all()
-    therapists = Therapist.objects.all()
+    therapist = request.user.getTherapist()
     if request.method=="POST":
         form=Item_form(request.POST,request.FILES)
         if form.is_valid():
-            for t in therapists:
-                if t.user_ID == request.user:
-                    break;
-            I=Item(user_ID=t,Name= form.cleaned_data['Name'],FilePath= form.cleaned_data['FilePath'],Type=form.cleaned_data['Type'])
+            
+            I=Item(user_ID=therapist,Name= form.cleaned_data['Name'],FilePath= form.cleaned_data['FilePath'],Type=form.cleaned_data['Type'])
             I.save()
             return HttpResponseRedirect(reverse("item-upload"))
     else:
         form=Item_form()
-    return render(request,'sehatagahiapp/itemupload.html',{"form":form,"all":all_Item})
+    context = {
+        'heading' : 'Upload an Item',
+        'name': therapist.Name,
+        'sidebarOptions' : therapistOptions,
+        'form' : form,
+        'all' : all_Item
+    }
+    return render(request,'sehatagahiapp/itemupload.html',context)
+
+def getLoginOptions(request):
+    return render(request, 'sehatagahiapp/login-options.html')
+
+def loginUser(request):
+    # if this is a POST request we need to process the form data
+    if request.method == 'POST':
+        # create a form instance and populate it with data from the request:
+        form = LoginForm(request.POST)
+        # check whether it's valid:
+        if form.is_valid():
+            # process the data in form.cleaned_data as required
+            username = form.cleaned_data["username"]
+            password = form.cleaned_data["password"]
+
+            # Check if username and password are correct, returning User object if so
+            user = authenticate(request, username=username, password=password)
+
+            # If user object is returned, log in and route to index page:
+            if user:
+                login(request, user)
+                if user.is_therapist:
+                    return HttpResponseRedirect(reverse("therapist-dashboard"))
+                elif user.is_patient:
+                    return HttpResponseRedirect(reverse("index"))
+            # Otherwise, return login page again with new context
+            else:
+                return render(request, "sehatagahiapp/therapist-login.html", {
+                    "message": "Invalid Credentials",
+                    "form" : form
+                })
+            # redirect to a new URL:
+            
+
+    # if a GET (or any other method) we'll create a blank form
+    else:
+        form = LoginForm()
+
+    return render(request, 'sehatagahiapp/therapist-login.html', {'form': form})
+
+def getTherapistDashboard(request):
+    user = request.user
+    therapist = user.getTherapist()
+    patientList = therapist.getMyPatients()
+    context = {
+        "name": therapist.Name,
+        "sidebarOptions" : therapistOptions,
+        "heading" : "My Patients",
+        "patients" : patientList
+    }
+                    
+    return render(request, "sehatagahiapp/therapist-dashboard.html", context)
+
+def addPatient(request):
+    return HttpResponse("Add a patient: Work on Page in progress!")
+
+def viewItem(request):
+    all_Item = Item.objects.all()
+    therapist = request.user.getTherapist()
+    form = Item_Rename_form()
+    context = {
+        'heading': 'Item View/Edit',
+        'name': therapist.Name,
+        'sidebarOptions': therapistOptions,
+        'form': form,
+        'all': all_Item,
+        'therapistid':therapist.id
+    }
+    return render(request, 'sehatagahiapp/Item-view.html', context)
+
+def updateItem(request):
+    all_Item = Item.objects.all()
+    therapist = request.user.getTherapist()
+    if request.method == "POST":
+        form = Item_Rename_form(request.POST)
+        if form.is_valid():
+            renameitem = request.POST['Item']
+            instance = Item.objects.get(id=renameitem)
+            instance.Name = form.cleaned_data['ReName']
+            instance.save()
+            return HttpResponseRedirect(reverse("view-item"))
+        else:
+            renameitem = request.POST['Item']
+            instance = Item.objects.get(id=renameitem)
+    else:
+        form = Item_Rename_form()
+
+    context = {
+        'heading': 'Item View/Edit',
+        'name': therapist.Name,
+        'sidebarOptions': therapistOptions,
+        'form': form,
+        'all': all_Item,
+        'therapistid': therapist.id
+    }
+    if request.method=="POST":
+        context = {
+            'heading': 'Item View/Edit',
+            'name': therapist.Name,
+            'sidebarOptions': therapistOptions,
+            'form': form,
+            'all': all_Item,
+            'therapistid': therapist.id,
+            'message':"Could Not Re-Name the Item"+': '+instance.Name
+        }
+    return render(request, 'sehatagahiapp/Item-view.html', context)
+
+
+def deleteItem(request):
+    all_Item = Item.objects.all()
+    therapist = request.user.getTherapist()
+    if request.method == "POST":
+        delitem = request.POST['Item']
+        deleteitem=Item.objects.filter(id=delitem)
+        os.remove(os.path.join(BASE_DIR,str(deleteitem[0].FilePath)))
+        deleteitem.delete()
+
+        return HttpResponseRedirect(reverse("view-item"))
+    else:
+        form = Item_Rename_form()
+
+    context = {
+        'heading': 'Item View/Edit',
+        'name': therapist.Name,
+        'sidebarOptions': therapistOptions,
+        'form': form,
+        'all': all_Item,
+        'therapistid': therapist.id
+    }
+    return render(request, 'sehatagahiapp/Item-view.html', context)
+
+
+
+
+

@@ -1,37 +1,15 @@
+{% extends 'sehatagahiapp/dashboard-outline.html' %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-
-    <title>Item Upload</title>
-</head>
-<body>
-
+{% block content %}
 {% if request.user.is_authenticated %}
 {% load crispy_forms_tags %}
-<div class="container border rounded bg-light m-5 p-5 mx-auto">
+<div class="border rounded bg-light p-5 m-5">
     <form action="{% url 'item-upload' %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{form|crispy}}
-        <input type="submit" value="Upload" class="btn btn-primary">
+        <input type="submit" value="Upload" class="btn btn-primary mt-5">
     </form>
-</div>
-<div>
-    {% for x in all %}
-    <h3 class="text-center mt-2 mb-2">{{x.caption}}</h3>
-    <video class="embed-responsive embed-responsive-16by9" controls="controls" >
-        <source src="{{x.FilePath.url}}" type="video/mp4" />
-    </video>
-    {% endfor %}
-
-
-
 </div>
 
 {% endif %}
-
-</body>
-</html>
+{% endblock %}

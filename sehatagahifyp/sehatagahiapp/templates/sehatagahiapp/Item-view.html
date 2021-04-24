@@ -1,0 +1,104 @@
+{% extends 'sehatagahiapp/dashboard-outline.html' %}
+
+{% block content %}
+{% if request.user.is_authenticated %}
+{% load crispy_forms_tags %}
+<div>
+    {% if message %}
+    <div class="alert alert-danger">{{ message }}</div>
+    {% endif %}
+</div>
+<div class="container border rounded bg-light mr-5 ">
+  <div class= "row ">
+  {% for x in all %}
+      {% if x.user_ID.id == therapistid %}
+
+  {% if forloop.counter|divisibleby:4 %}
+    <div class="col-md-3 col-sm-12 my-3">
+      <div>
+      {{x.Name}}
+      {% if  x.Type == '1' %}
+   <video  width="100%" height="100%" controls="controls" >
+        <source src="{{x.FilePath.url}}" type="video/mp4" />
+    </video>
+      <!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target=".exampleModal">
+  Edit
+</button>
+
+<!-- Modal -->
+<div class="modal fade exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title exampleModalLabel">Modal title</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'Rename-item' %}" method="post" >
+        {% csrf_token %}
+        {{form|crispy}}
+        <input type="hidden" name="Item" value={{x.id}}>
+        <input type="submit" value="Rename" class="btn btn-primary m-1">
+    </form>
+        <br>
+        <form action="{% url 'Delete-item' %}" method="post" >
+        {% csrf_token %}
+        <input type="hidden" name="Item" value={{x.id}}>
+        <input type="submit" value="Delete" class="btn btn-danger">
+    </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+      {% elif x.Type == '2' %}
+        <img  src="{{x.FilePath.url}}"  width="100%" height="100%">
+      <button class="btn btn-primary" onclick="openForm()">EDIT</button>
+      {% elif x.Type == '3' %}
+      <iframe src="{{x.FilePath.url}}"  width="100%" height="100%">
+    </iframe>
+      <button class="btn btn-primary " onclick="openForm()">EDIT</button>
+      {% endif %}
+    </div>
+      </div>
+  </div>
+    {% if not forloop.last %}
+    <div class="row ">
+    {% endif %}
+  {% else %}
+    <div class="col-md-3 col-sm-12 my-3">
+      <div>
+      {{x.Name}}
+    {% if  x.Type == '1' %}
+    <video  width="100%" height="100%" controls="controls" >
+        <source src="{{x.FilePath.url}}" type="video/mp4" />
+    </video>
+      <button class="btn btn-primary " onclick="openForm()">EDIT</button>
+      {% elif x.Type == '2' %}
+        <img  src="{{x.FilePath.url}}"  width="100%" height="100%">
+      <button class="btn btn-primary" onclick="openForm()">EDIT</button>
+      {% elif x.Type == '3' %}
+      <iframe  src="{{x.FilePath.url}}"  width="100%" height="100%">
+    </iframe>
+      <button class="btn btn-primary" onclick="openForm()">EDIT</button>
+      {% endif %}
+    </div>
+      </div>
+  {% endif %}
+  {% endif %}
+  {% endfor %}
+  </div>
+
+
+</div>
+
+
+
+{% endif %}
+{% endblock %}
+
+
+

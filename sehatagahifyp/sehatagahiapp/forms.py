@@ -12,7 +12,7 @@ class Item_form(forms.Form):
         cleaned_data = super().clean()
         Type = cleaned_data.get("Type")
         File = cleaned_data.get("FilePath").name
-        if not (File.endswith('.mp4') and Type == '1' or File.endswith('.pdf') and Type == '3' or File.endswith('.png') and Type == '2'):
+        if not (File.endswith('.mp4') and Type == '1' or File.endswith('.png') and Type == '2' or File.endswith('.pdf') and Type == '3'):
             self.add_error('Type', 'Please select .mp4 for Video, .png for Image or .pdf for PDF')
 
 
@@ -35,4 +35,13 @@ class Therapist_Register_form(forms.Form):
         if '@sehatagahi.com' not  in email:
             self.add_error('WorkEmail', 'Please enter the correct email')
 
+
+
+
+class LoginForm(forms.Form):
+    username = forms.CharField(label="Username", max_length=60)
+    password = forms.CharField(label="Password", widget = forms.PasswordInput(), max_length=60)
+
+class Item_Rename_form(forms.Form):
+    ReName = forms.CharField(label='Item Name',max_length=25, validators=[validator.RegexValidator(regex=r'^[a-zA-Z][a-zA-Z ]+$')])
 
