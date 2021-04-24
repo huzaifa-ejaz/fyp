@@ -1,0 +1,35 @@
+{% extends 'sehatagahiapp/patient-dashboard-outline.html' %}
+{% load crispy_forms_tags %}
+
+{% block sidebar %}
+              {% for link, option in sidebarOptions.items %}
+              <li class="nav-item"><a href="{% url link %}" class="text-reset text-decoration-none">{{option}}</a></li>
+              {% endfor %}
+{% endblock %}
+
+{% block content %}
+
+{% if message %}
+<div class="alert alert-success text-center">{{ message }}</div>
+{% endif %}
+<form action="{% url 'add-log'  %}" method="post">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button type="submit" class="btn btn-primary mt-3">واقعہ محفوظ کریں</button>
+</form>
+
+{% if logs %}
+{% for log in logs %}
+<div class="card p-3 mt-3">
+    <p class="fw-bold">{{ log.DateTimeAdded }}</p>
+    <p>{{ log.Message }}</p>
+</div>
+{% endfor %}
+{% else %}
+<div class="card p-3 mt-3 fw-bold">
+    فی الحال کوئ واقعہ محفوظ نہیں
+</div>
+{% endif %}
+
+
+{% endblock %}

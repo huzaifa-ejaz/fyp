@@ -6,7 +6,7 @@ from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
-from .forms import Item_form, LoginForm, Therapist_Register_form, PatientRegisterForm, PatientEditForm, PatientPasswordChangeForm
+from .forms import *
 
 
 
@@ -21,7 +21,8 @@ therapistOptions = {
 therapistPatientOptions = {
     'edit-patient' : "Edit Patient Details",
     'therapist-patient-page' : "Return to Patient's Page",
-    'change-patient-password' : "Change Patient's Password"
+    'change-patient-password' : "Change Patient's Password",
+    'view-logs' : "View Patient's Logs"
 }
 
 patientOptions = {
@@ -317,7 +318,47 @@ def getPatientDashboard(request):
 
 @login_required
 def addLog(request):
-    return HttpResponse("Work in progress on this page!")
+    user = request.user
+    patient = user.getPatient()
+    
+    if request.method == 'POST':
+        form = PatientLogForm(request.POST)
+        if form.is_valid():
+            log = PatientLog(
+                user_ID = patient,
+                Message = form.cleaned_data['message']
+            )
+            log.save()
+            newForm = PatientLogForm()
+            logs = PatientLog.objects.filter(user_ID = patient)
+            lifoLogs = list(reversed(logs))
+            context = {
+                "name": patient.Name,
+                "sidebarOptions": patientOptions,
+                "heading": "اہم واقعات",
+                "patient" : patient,
+                "message": "اہم واقعہ محفوظ کرلیا گیا ہے",
+                "form": newForm,
+                "logs" : lifoLogs
+            }
+            return render(request, "sehatagahiapp/patient-add-log.html", context)
+    else:
+        form = PatientLogForm()
+        logs = PatientLog.objects.filter(user_ID = patient)
+        lifoLogs = list(reversed(logs))
+        context = {
+                "name": patient.Name,
+                "sidebarOptions": patientOptions,
+                "heading": "اہم واقعات",
+                "patient" : patient,
+                "form": form,
+                "logs": lifoLogs
+            }
+
+    return render(request, "sehatagahiapp/patient-add-log.html", context)
+
+def viewPatientLogs():
+    HttpResponse("Work on page in progress!")
 
     
             

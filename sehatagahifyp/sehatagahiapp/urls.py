@@ -15,7 +15,8 @@ urlpatterns = [
     path("patient/<int:pk>/change-password", views.changePatientPassword, name="change-patient-password"),
     path("patient-login", views.loginUser, name="patient-login"),
     path("patient-dashboard", views.getPatientDashboard, name="patient-dashboard"),
-    path("patient/add-log", views.addLog, name="add-log")
+    path("patient/add-log", views.addLog, name="add-log"),
+    path("patient/<int:pk>/view-logs", views.viewPatientLogs, name="view-logs")
     
 
 

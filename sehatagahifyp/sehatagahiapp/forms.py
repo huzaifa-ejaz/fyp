@@ -89,3 +89,6 @@ class PatientPasswordChangeForm(forms.Form):
         passwordre = cleaned_data.get("passwordRe")
         if password!=passwordre:
             self.add_error('passwordRe', 'The password does not match')
+
+class PatientLogForm(forms.Form):
+    message = forms.CharField(label='اہم واقعہ لکھیں', max_length=500, widget=forms.Textarea)
