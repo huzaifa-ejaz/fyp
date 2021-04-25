@@ -357,8 +357,42 @@ def addLog(request):
 
     return render(request, "sehatagahiapp/patient-add-log.html", context)
 
-def viewPatientLogs():
-    HttpResponse("Work on page in progress!")
+def viewPatientLogs(request,pk):
+    therapist = request.user.getTherapist()
+    patient = get_object_or_404(Patient,pk=pk)
+    patientLogs = PatientLog.objects.filter(user_ID = patient)
+    lifoLogs = list(reversed(patientLogs))
+    context ={
+        "name" : therapist.Name,
+        "sidebarOptions" : therapistPatientOptions,
+        "logs" : lifoLogs,
+        "patient" : patient
+    }
+    
+    return render(request, "sehatagahiapp/therapist-view-patient-log.html", context)
+
+def markLogRead(request,pk,log_pk):
+    log = get_object_or_404(PatientLog,pk=log_pk)
+    log.isRead = True
+    log.save()
+    
+    return HttpResponseRedirect(reverse('view-logs', kwargs = { 'pk' : pk}))
+
+def viewUnreadLogs(request):
+    therapist = request.user.getTherapist()
+    patientList = therapist.getMyPatients
+    logs = PatientLog.objects.filter(user_ID__in=patientList,isRead = False)
+    lifoLogs = list(reversed(logs))
+
+    context = {
+        'name':therapist.Name
+        'sidebarOptions': therapistOptions
+        'heading' : Unread Patient Logs
+        'logs' : lifoLogs
+    }
+
+    return render(request, 'sehatagahiapp/therapist-view-unread-logs.html', context)
+
 
     
             
