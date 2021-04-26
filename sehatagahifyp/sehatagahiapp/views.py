@@ -108,6 +108,7 @@ def ItemUpload_view(request):
         'name': therapist.Name,
         'sidebarOptions' : therapistOptions,
         'form' : form,
+        'nUnread' : therapist.getNumberOfUnreadLogs(),
         'all' : all_Item
     }
     return render(request,'sehatagahiapp/itemupload.html',context)
@@ -171,7 +172,8 @@ def getTherapistDashboard(request):
         "name": therapist.Name,
         "sidebarOptions" : therapistOptions,
         "heading" : "My Patients",
-        "patients" : patientList
+        "patients" : patientList,
+        "nUnread" : therapist.getNumberOfUnreadLogs()
     }
                     
     return render(request, "sehatagahiapp/therapist-dashboard.html", context)
@@ -202,6 +204,7 @@ def addPatient(request):
         'heading' : 'Create a Patient',
         'name': therapist.Name,
         'sidebarOptions' : therapistOptions,
+        'nUnread' : therapist.getNumberOfUnreadLogs(),
         'form' : form
     }
     return render(request, "sehatagahiapp/patient-register.html",context)
@@ -214,6 +217,7 @@ def getTherapistPatientPage(request,pk):
         'heading' : patient.Name,
         'sidebarOptions' : therapistPatientOptions,
         'name' : therapist.Name,
+        'nUnread' : therapist.getNumberOfUnreadLogs(),
         'patient' : patient
     }
     return render(request, "sehatagahiapp/therapist-patient-page.html", context)
@@ -263,7 +267,8 @@ def editPatient(request,pk):
         'name' : therapist.Name,
         'heading': 'Edit Patient Details',
         'patient' : patient,
-        'sidebarOptions' : therapistPatientOptions
+        'sidebarOptions' : therapistPatientOptions,
+        'nUnread' : therapist.getNumberOfUnreadLogs()
     }
 
     return render(request, 'sehatagahiapp/edit-patient.html',context)
@@ -285,6 +290,7 @@ def changePatientPassword(request,pk):
                'heading': 'Change Patient\'s Password',
                'patient' : patient,
                'sidebarOptions' : therapistPatientOptions,
+               'nUnread' : therapist.getNumberOfUnreadLogs(),
                'message' : 'Patient\'s password has been changed!'
            }
            return render (request,'sehatagahiapp/patient-password-change.html',context)
@@ -297,7 +303,8 @@ def changePatientPassword(request,pk):
         'name' : therapist.Name,
         'heading': 'Change Patient\'s Password',
         'patient' : patient,
-        'sidebarOptions' : therapistPatientOptions
+        'sidebarOptions' : therapistPatientOptions,
+        'nUnread' : therapist.getNumberOfUnreadLogs()
     }
     return render (request,'sehatagahiapp/patient-password-change.html',context)
    
@@ -362,6 +369,7 @@ def viewPatientLogs(request,pk):
     lifoLogs = list(reversed(patientLogs))
     context ={
         "name" : therapist.Name,
+        "nUnread" : therapist.getNumberOfUnreadLogs,
         "sidebarOptions" : therapistPatientOptions,
         "logs" : lifoLogs,
         "patient" : patient
@@ -386,6 +394,7 @@ def viewUnreadLogs(request):
     context = {
         'name':therapist.Name,
         'sidebarOptions': therapistOptions,
+        'nUnread' : therapist.getNumberOfUnreadLogs(),
         'heading' : 'Unread Patient Logs',
         'logs' : lifoLogs
     }

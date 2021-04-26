@@ -61,6 +61,13 @@ class Therapist(models.Model):
                 myPatients.append(patient)
         return myPatients
     
+    def getNumberOfUnreadLogs(self):
+        patientList = self.getMyPatients()
+        logs = PatientLog.objects.filter(user_ID__in=patientList,isRead = False)
+        nUnreadLogs = logs.count()
+
+        return nUnreadLogs
+    
 
 
 
