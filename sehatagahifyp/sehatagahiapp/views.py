@@ -362,6 +362,7 @@ def addLog(request):
 
     return render(request, "sehatagahiapp/patient-add-log.html", context)
 
+@login_required
 def viewPatientLogs(request,pk):
     therapist = request.user.getTherapist()
     patient = get_object_or_404(Patient,pk=pk)
@@ -377,6 +378,7 @@ def viewPatientLogs(request,pk):
     
     return render(request, "sehatagahiapp/therapist-view-patient-log.html", context)
 
+@login_required
 def markLogRead(request,pk,log_pk):
     # This methods marks the log as read and redirects to the specific patient's logs page
     log = get_object_or_404(PatientLog,pk=log_pk)
@@ -385,6 +387,7 @@ def markLogRead(request,pk,log_pk):
     
     return HttpResponseRedirect(reverse('view-logs', kwargs = { 'pk' : pk}))
 
+@login_required
 def viewUnreadLogs(request):
     therapist = request.user.getTherapist()
     patientList = therapist.getMyPatients()
@@ -401,6 +404,7 @@ def viewUnreadLogs(request):
 
     return render(request, 'sehatagahiapp/therapist-view-unread-logs.html', context)
 
+@login_required
 def markUnreadLogRead(request,log_pk):
     # This method marks the log as read and redirects to the unread logs page
     log = get_object_or_404(PatientLog,pk=log_pk)
