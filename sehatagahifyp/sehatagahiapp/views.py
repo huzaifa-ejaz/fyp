@@ -85,10 +85,8 @@ def logout_view(request):
 
     logout(request)
     form = LoginForm()
-    return render(request, "sehatagahiapp/login.html", {
-                "message": "Logged Out",
-                "form" : form,
-                "userType" : "User"
+    return render(request, "sehatagahiapp/login-options.html", {
+                "message": "Logged Out"
             })
 
 
@@ -372,6 +370,7 @@ def viewPatientLogs(request,pk):
     return render(request, "sehatagahiapp/therapist-view-patient-log.html", context)
 
 def markLogRead(request,pk,log_pk):
+    # This methods marks the log as read and redirects to the specific patient's logs page
     log = get_object_or_404(PatientLog,pk=log_pk)
     log.isRead = True
     log.save()
@@ -380,18 +379,28 @@ def markLogRead(request,pk,log_pk):
 
 def viewUnreadLogs(request):
     therapist = request.user.getTherapist()
-    patientList = therapist.getMyPatients
+    patientList = therapist.getMyPatients()
     logs = PatientLog.objects.filter(user_ID__in=patientList,isRead = False)
     lifoLogs = list(reversed(logs))
 
     context = {
-        'name':therapist.Name
-        'sidebarOptions': therapistOptions
-        'heading' : Unread Patient Logs
+        'name':therapist.Name,
+        'sidebarOptions': therapistOptions,
+        'heading' : 'Unread Patient Logs',
         'logs' : lifoLogs
     }
 
     return render(request, 'sehatagahiapp/therapist-view-unread-logs.html', context)
+
+def markUnreadLogRead(request,log_pk):
+    # This method marks the log as read and redirects to the unread logs page
+    log = get_object_or_404(PatientLog,pk=log_pk)
+    log.isRead = True
+    log.save()
+
+    return HttpResponseRedirect(reverse('view-unread-logs'))
+
+
 
 
     

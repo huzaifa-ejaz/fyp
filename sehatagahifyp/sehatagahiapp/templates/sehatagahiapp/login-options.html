@@ -10,6 +10,9 @@
         <div class="col-4"></div>
         <div class="col-4">
             <div class="container bg-light p-5 centered">
+                {% if message %}
+                <div class="alert alert-danger">{{ message }}</div>
+                {% endif %}
                 <center><button class="btn btn-outline-success max-width"><a href="{% url 'login' 'Caregiver' %}" class="text-reset text-decoration-none">Caregiver Log In</a></button></center>
                 <center><button class="btn btn-outline-primary mt-3"><a href="{% url 'login' 'Therapist' %}" class="text-reset text-decoration-none">Therapist Log In</a></button></center>
             </div>
