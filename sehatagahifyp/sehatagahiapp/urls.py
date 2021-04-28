@@ -16,9 +16,9 @@ urlpatterns = [
     path("patient-login", views.loginUser, name="patient-login"),
     path("patient-dashboard", views.getPatientDashboard, name="patient-dashboard"),
     path("patient/add-log", views.addLog, name="add-log"),
-    path("view-item", views.viewItem, name="view-item"),
-    path("Rename-item", views.updateItem, name="Rename-item"),
-    path("Delete-item", views.deleteItem, name="Delete-item")
+    path("item/view", views.viewItem, name="view-item"),
+    path("item/<int:pk>/edit", views.updateItem, name="Rename-item"),
+    path("item/<int:pk>/delete", views.deleteItem, name="Delete-item")
 
 
 

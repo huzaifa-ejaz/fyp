@@ -20,11 +20,7 @@ therapistOptions = {
     'therapist-dashboard' : "Return to Dashboard"
 
 }
-therapistOptions = {
-    'add-patient' : "Add New Patient",
-    'item-upload' : "Upload an Item",
-    'therapist-dashboard' : "Return to Dashboard"
-}
+
 
 therapistPatientOptions = {
     'edit-patient' : "Edit Patient Details",
@@ -59,7 +55,7 @@ def therapist_register(request):
             user.save()
             t = Therapist(user = user, Name = form.cleaned_data['Name'], MobileNumber = form.cleaned_data['MobileNumber'],WorkEmail=form.cleaned_data['WorkEmail'],SecurityQs1=form.cleaned_data['SecurityQs1'],SecurityQs2=form.cleaned_data['SecurityQs2'] )
             t.save()
-            return HttpResponseRedirect(reverse("therapist-login"))
+            return HttpResponseRedirect(reverse("login-options"))
     else:
         form=Therapist_Register_form()
 
@@ -335,74 +331,50 @@ def addLog(request):
 def viewItem(request):
     all_Item = Item.objects.all()
     therapist = request.user.getTherapist()
-    form = Item_Rename_form()
     context = {
         'heading': 'Item View/Edit',
         'name': therapist.Name,
         'sidebarOptions': therapistOptions,
-        'form': form,
         'all': all_Item,
         'therapistid':therapist.id
     }
     return render(request, 'sehatagahiapp/Item-view.html', context)
 
 
-def updateItem(request):
+def updateItem(request,pk):
     all_Item = Item.objects.all()
     therapist = request.user.getTherapist()
     if request.method == "POST":
         form = Item_Rename_form(request.POST)
         if form.is_valid():
-            renameitem = request.POST['Item']
-            instance = Item.objects.get(id=renameitem)
+            instance = Item.objects.get(pk=pk)
             instance.Name = form.cleaned_data['ReName']
             instance.save()
             return HttpResponseRedirect(reverse("view-item"))
-        else:
-            renameitem = request.POST['Item']
-            instance = Item.objects.get(id=renameitem)
     else:
         form = Item_Rename_form()
 
     context = {
-        'heading': 'Item View/Edit',
+        'heading': 'Item Edit',
         'name': therapist.Name,
         'sidebarOptions': therapistOptions,
         'form': form,
-        'all': all_Item,
-        'therapistid': therapist.id
+        'itempk':pk
     }
-    if request.method=="POST":
-        context = {
-            'heading': 'Item View/Edit',
-            'name': therapist.Name,
-            'sidebarOptions': therapistOptions,
-            'form': form,
-            'all': all_Item,
-            'therapistid': therapist.id,
-            'message':"Could Not Re-Name the Item"+': '+instance.Name
-        }
-    return render(request, 'sehatagahiapp/Item-view.html', context)
+    return render(request, 'sehatagahiapp/Item-Update.html', context)
 
 
-def deleteItem(request):
+def deleteItem(request,pk):
     all_Item = Item.objects.all()
     therapist = request.user.getTherapist()
-    if request.method == "POST":
-        delitem = request.POST['Item']
-        deleteitem=Item.objects.filter(id=delitem)
-        os.remove(os.path.join(BASE_DIR,str(deleteitem[0].FilePath)))
-        deleteitem.delete()
-
-        return HttpResponseRedirect(reverse("view-item"))
-    else:
-        form = Item_Rename_form()
+    deleteitem=Item.objects.filter(pk=pk)
+    os.remove(os.path.join(BASE_DIR,str(deleteitem[0].FilePath)))
+    deleteitem.delete()
 
     context = {
         'heading': 'Item View/Edit',
         'name': therapist.Name,
         'sidebarOptions': therapistOptions,
-        'form': form,
         'all': all_Item,
         'therapistid': therapist.id
     }

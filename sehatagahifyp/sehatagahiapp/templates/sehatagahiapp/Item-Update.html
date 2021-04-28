@@ -15,7 +15,7 @@
 {% if request.user.is_authenticated %}
 {% load crispy_forms_tags %}
 <div class="border rounded bg-light p-5 m-5">
-    <form action="{% url 'item-upload' %}" method="post" enctype="multipart/form-data">
+    <form action="{% url 'Rename-item' itempk %}" method="post" >
         {% csrf_token %}
         {{form|crispy}}
         <input type="submit" value="Upload" class="btn btn-primary mt-5">
