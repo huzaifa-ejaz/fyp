@@ -25,7 +25,8 @@ therapistOptions = {
 therapistPatientOptions = {
     'edit-patient' : "Edit Patient Details",
     'therapist-patient-page' : "Return to Patient's Page",
-    'change-patient-password' : "Change Patient's Password"
+    'change-patient-password' : "Change Patient's Password",
+    'view-logs' : "View Patient's Logs"
 }
 
 patientOptions = {
@@ -88,10 +89,8 @@ def logout_view(request):
 
     logout(request)
     form = LoginForm()
-    return render(request, "sehatagahiapp/login.html", {
-                "message": "Logged Out",
-                "form" : form,
-                "userType" : "User"
+    return render(request, "sehatagahiapp/login-options.html", {
+                "message": "Logged Out"
             })
 
 
@@ -113,6 +112,7 @@ def ItemUpload_view(request):
         'name': therapist.Name,
         'sidebarOptions' : therapistOptions,
         'form' : form,
+        'nUnread' : therapist.getNumberOfUnreadLogs(),
         'all' : all_Item
     }
     return render(request,'sehatagahiapp/itemupload.html',context)
@@ -181,7 +181,8 @@ def getTherapistDashboard(request):
         "name": therapist.Name,
         "sidebarOptions" : therapistOptions,
         "heading" : "My Patients",
-        "patients" : patientList
+        "patients" : patientList,
+        "nUnread" : therapist.getNumberOfUnreadLogs()
     }
 
     return render(request, "sehatagahiapp/therapist-dashboard.html", context)
@@ -212,6 +213,7 @@ def addPatient(request):
         'heading' : 'Create a Patient',
         'name': therapist.Name,
         'sidebarOptions' : therapistOptions,
+        'nUnread' : therapist.getNumberOfUnreadLogs(),
         'form' : form
     }
     return render(request, "sehatagahiapp/patient-register.html",context)
@@ -224,6 +226,7 @@ def getTherapistPatientPage(request,pk):
         'heading' : patient.Name,
         'sidebarOptions' : therapistPatientOptions,
         'name' : therapist.Name,
+        'nUnread' : therapist.getNumberOfUnreadLogs(),
         'patient' : patient
     }
     return render(request, "sehatagahiapp/therapist-patient-page.html", context)
@@ -273,7 +276,8 @@ def editPatient(request,pk):
         'name' : therapist.Name,
         'heading': 'Edit Patient Details',
         'patient' : patient,
-        'sidebarOptions' : therapistPatientOptions
+        'sidebarOptions' : therapistPatientOptions,
+        'nUnread' : therapist.getNumberOfUnreadLogs()
     }
 
     return render(request, 'sehatagahiapp/edit-patient.html',context)
@@ -295,6 +299,7 @@ def changePatientPassword(request,pk):
                'heading': 'Change Patient\'s Password',
                'patient' : patient,
                'sidebarOptions' : therapistPatientOptions,
+               'nUnread' : therapist.getNumberOfUnreadLogs(),
                'message' : 'Patient\'s password has been changed!'
            }
            return render (request,'sehatagahiapp/patient-password-change.html',context)
@@ -307,7 +312,8 @@ def changePatientPassword(request,pk):
         'name' : therapist.Name,
         'heading': 'Change Patient\'s Password',
         'patient' : patient,
-        'sidebarOptions' : therapistPatientOptions
+        'sidebarOptions' : therapistPatientOptions,
+        'nUnread' : therapist.getNumberOfUnreadLogs()
     }
     return render (request,'sehatagahiapp/patient-password-change.html',context)
 
@@ -326,7 +332,98 @@ def getPatientDashboard(request):
 
 @login_required
 def addLog(request):
-    return HttpResponse("Work in progress on this page!")
+    user = request.user
+    patient = user.getPatient()
+
+    if request.method == 'POST':
+        form = PatientLogForm(request.POST)
+        if form.is_valid():
+            log = PatientLog(
+                user_ID = patient,
+                Message = form.cleaned_data['message']
+            )
+            log.save()
+            newForm = PatientLogForm()
+            logs = PatientLog.objects.filter(user_ID = patient)
+            lifoLogs = list(reversed(logs))
+            context = {
+                "name": patient.Name,
+                "sidebarOptions": patientOptions,
+                "heading": "اہم واقعات",
+                "patient" : patient,
+                "message": "اہم واقعہ محفوظ کرلیا گیا ہے",
+                "form": newForm,
+                "logs" : lifoLogs
+            }
+            return render(request, "sehatagahiapp/patient-add-log.html", context)
+    else:
+        form = PatientLogForm()
+        logs = PatientLog.objects.filter(user_ID = patient)
+        lifoLogs = list(reversed(logs))
+        context = {
+                "name": patient.Name,
+                "sidebarOptions": patientOptions,
+                "heading": "اہم واقعات",
+                "patient" : patient,
+                "form": form,
+                "logs": lifoLogs
+            }
+
+    return render(request, "sehatagahiapp/patient-add-log.html", context)
+
+@login_required
+def viewPatientLogs(request,pk):
+    therapist = request.user.getTherapist()
+    patient = get_object_or_404(Patient,pk=pk)
+    patientLogs = PatientLog.objects.filter(user_ID = patient)
+    lifoLogs = list(reversed(patientLogs))
+    context ={
+        "name" : therapist.Name,
+        "nUnread" : therapist.getNumberOfUnreadLogs,
+        "sidebarOptions" : therapistPatientOptions,
+        "logs" : lifoLogs,
+        "patient" : patient
+    }
+
+    return render(request, "sehatagahiapp/therapist-view-patient-log.html", context)
+
+@login_required
+def markLogRead(request,pk,log_pk):
+    # This methods marks the log as read and redirects to the specific patient's logs page
+    log = get_object_or_404(PatientLog,pk=log_pk)
+    log.isRead = True
+    log.save()
+
+    return HttpResponseRedirect(reverse('view-logs', kwargs = { 'pk' : pk}))
+
+@login_required
+def viewUnreadLogs(request):
+    therapist = request.user.getTherapist()
+    patientList = therapist.getMyPatients()
+    logs = PatientLog.objects.filter(user_ID__in=patientList,isRead = False)
+    lifoLogs = list(reversed(logs))
+
+    context = {
+        'name':therapist.Name,
+        'sidebarOptions': therapistOptions,
+        'nUnread' : therapist.getNumberOfUnreadLogs(),
+        'heading' : 'Unread Patient Logs',
+        'logs' : lifoLogs
+    }
+
+    return render(request, 'sehatagahiapp/therapist-view-unread-logs.html', context)
+
+@login_required
+def markUnreadLogRead(request,log_pk):
+    # This method marks the log as read and redirects to the unread logs page
+    log = get_object_or_404(PatientLog,pk=log_pk)
+    log.isRead = True
+    log.save()
+
+    return HttpResponseRedirect(reverse('view-unread-logs'))
+
+
+
 
 def viewItem(request):
     all_Item = Item.objects.all()

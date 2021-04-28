@@ -62,6 +62,13 @@ class Therapist(models.Model):
                 myPatients.append(patient)
         return myPatients
 
+    def getNumberOfUnreadLogs(self):
+        patientList = self.getMyPatients()
+        logs = PatientLog.objects.filter(user_ID__in=patientList,isRead = False)
+        nUnreadLogs = logs.count()
+
+        return nUnreadLogs
+
 
 
 
@@ -81,8 +88,9 @@ class Patient(models.Model):
 
 class PatientLog(models.Model):
     user_ID = models.ForeignKey(Patient, on_delete=models.SET_NULL, null=True, related_name="Log")
-    Message = models.CharField(max_length=64)
-    Time = models.CharField(max_length=64)
+    Message = models.TextField(max_length=500)
+    DateTimeAdded = models.DateTimeField(auto_now_add = True, blank = True, null=True)
+    isRead = models.BooleanField(default=False)
 
 class Patient_Data(models.Model):
     user_ID = models.ForeignKey(Patient, on_delete=models.SET_NULL, null=True, related_name="Data")

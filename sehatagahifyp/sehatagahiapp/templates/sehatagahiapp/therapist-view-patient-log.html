@@ -1,0 +1,35 @@
+{% extends 'sehatagahiapp/dashboard-outline.html' %}
+
+{% block notification %}
+        <a href="{% url 'view-unread-logs' %}"><button type="button" class="btn btn-primary">
+            <i class="fas fa-bell px-2"></i><span class="badge bg-secondary">{{ nUnread }}</span>
+        </button></a>
+{% endblock %}
+
+{% block sidebar %}
+              {% for link, option in sidebarOptions.items %}
+              <li class="nav-item"><a href="{% url link patient.pk %}" class="text-reset text-decoration-none">{{option}}</a></li>
+              {% endfor %}
+{% endblock %}
+
+{% block content %}
+    {% if logs %}
+        {% for log in logs %}
+
+            <div class="card p-3 mt-3">
+                <p class="fw-bold">{{ log.DateTimeAdded }}</p>
+                <p>{{ log.Message }}</p>
+                {% if not log.isRead %}
+                <button class="btn btn-danger"><a href="{% url 'mark-log' patient.pk log.pk %}" class="text-reset text-decoration-none">Mark as Read</a></button>
+                {% endif %}
+            </div>
+            
+        {% endfor %}
+
+    {% else %}
+        <div class="card p-3 mt-3">
+            <p>No Logs to Read</p>
+        </div>
+    {% endif %}
+
+{% endblock %}
