@@ -1,0 +1,94 @@
+{% extends 'sehatagahiapp/dashboard-outline.html' %}
+{% load crispy_forms_tags %}
+{% block notification %}
+    <a href="{% url 'view-unread-logs' %}"><button type="button" class="btn btn-primary">
+        <i class="fas fa-bell px-2"></i><span class="badge bg-secondary">{{ nUnread }}</span>
+    </button></a>
+{% endblock %}
+
+{% block sidebar %}
+              {% for link, option in sidebarOptions.items %}
+              <li class="nav-item"><a href="{% url link patient.pk %}" class="text-reset text-decoration-none">{{option}}</a></li>
+              {% endfor %}
+{% endblock %}
+
+{% block content %}
+<h4>{{ track.Name }}</h4>
+<div class="container border rounded bg-light mr-5 p-3">
+    
+    <div class = "row">
+        <h6>Items in this Track</h6>
+    </div>
+    <div class= "row ">
+    {% if trackItems %}
+    {% for x in trackItems %}
+  
+    {% if forloop.counter|divisibleby:4 %}
+      <div class="col-md-3 col-sm-12 my-3">
+        <div>
+        {{x.Name}}
+        {% if  x.Type == '1' %}
+     <video  width="100%" height="100%" controls="controls" >
+          <source src="{{x.FilePath.url}}" type="video/mp4" />
+      </video>
+  
+  
+        {% elif x.Type == '2' %}
+          <img  src="{{x.FilePath.url}}"  width="100%" height="100%">
+  
+  
+  
+  
+        {% elif x.Type == '3' %}
+        <iframe src="{{x.FilePath.url}}"  width="100%" height="100%">
+      </iframe>
+
+  
+  
+        {% endif %}
+      </div>
+        </div>
+    </div>
+      {% if not forloop.last %}
+      <div class="row ">
+      {% endif %}
+    {% else %}
+      <div class="col-md-3 col-sm-12 my-3">
+        <div>
+        {{x.Name}}
+      {% if  x.Type == '1' %}
+      <video  width="100%" height="100%" controls="controls" >
+          <source src="{{x.FilePath.url}}" type="video/mp4" />
+      </video>
+  
+  
+        {% elif x.Type == '2' %}
+          <img  src="{{x.FilePath.url}}"  width="100%" height="100%">
+  
+  
+        {% elif x.Type == '3' %}
+        <iframe  src="{{x.FilePath.url}}"  width="100%" height="100%">
+      </iframe>
+  
+        {% endif %}
+      </div>
+        </div>
+    {% endif %}
+    {% endfor %}
+    <div class="row">
+    </div>
+    {% else %}
+    <div class="container border rounded bg-light mr-5">
+      <p>No Items in this Track yet! Add items from below.</p>
+    </div>
+    
+    {% endif %}
+    </div>
+</div>
+<form action="{% url 'assign-track' patient.pk track.pk %}" method="post">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button type="submit" class="btn btn-warning mt-3">Assign This Track to {{ patient.Name }}</button>
+</form>
+
+{% endblock %}

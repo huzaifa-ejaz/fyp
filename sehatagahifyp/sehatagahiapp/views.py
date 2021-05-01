@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from .forms import *
 import os
+from django.db.models import Q
 
 
 # The sidebar options defined in a dictionary with the URL name as the key
@@ -17,7 +18,9 @@ therapistOptions = {
     'add-patient' : "Add New Patient",
     'item-upload' : "Upload an Item",
     'view-item' : "View/Edit Item",
-    'therapist-dashboard' : "Return to Dashboard"
+    'therapist-dashboard' : "Return to Dashboard",
+    'make-track': "Make a Track",
+    'view-edit-tracks' : "View/Edit My Tracks"
 
 }
 
@@ -26,7 +29,8 @@ therapistPatientOptions = {
     'edit-patient' : "Edit Patient Details",
     'therapist-patient-page' : "Return to Patient's Page",
     'change-patient-password' : "Change Patient's Password",
-    'view-logs' : "View Patient's Logs"
+    'view-logs' : "View Patient's Logs",
+    'choose-track' : "Assign a Track to Patient"
 }
 
 patientOptions = {
@@ -476,4 +480,173 @@ def deleteItem(request,pk):
         'therapistid': therapist.id
     }
     return render(request, 'sehatagahiapp/Item-view.html', context)
+
+# def makeTrack(request):
+#     all_Item = Item.objects.all()
+#     all_Track = Track.objects.all()
+#     therapist = request.user.getTherapist()
+#     if request.method == "POST":
+#         t = Track(user_ID=therapist,Name=request.POST["track"])
+#         t.save()
+#         for capital in request.POST.values():
+#             if capital.isdigit():
+#                 instance = Item.objects.get(id=capital)
+#                 t.Items.add(instance)
+#                 #print(capital)
+#         t.save()
+#         return HttpResponseRedirect(reverse("make-track"))
+
+#     context = {
+#         'heading': 'Make a Track',
+#         'name': therapist.Name,
+#         'sidebarOptions': therapistOptions,
+#         'all': all_Item,
+#         'all2': all_Track
+#     }
+#     return render(request, 'sehatagahiapp/make-track.html', context)
+
+def makeTrack(request):
+    therapist = request.user.getTherapist()
+
+    if request.method == "POST":
+        form = TrackNameForm(request.POST)
+        if form.is_valid():
+            track = Track(user_ID = therapist, Name= form.cleaned_data['trackName'])
+            track.save()
+            track_pk = track.id
+            return HttpResponseRedirect(reverse('add-remove-item',kwargs = { 'track_pk' : track_pk }))
+    else:
+        form = TrackNameForm()
+
+    context = {
+        'heading': 'Make a Track',
+        'name': therapist.Name,
+        'sidebarOptions': therapistOptions,
+        'form' : form
+    }
+
+    return render(request, 'sehatagahiapp/therapist-track-name.html', context)
+
+def addRemoveItem(request, track_pk):
+    therapist = request.user.getTherapist()
+    track = get_object_or_404(Track, pk=track_pk)
+    trackItems = track.Items.all()
+    items = Item.objects.exclude(track = track_pk)
+    query = request.GET.get("q")
+    if query:
+        items = items.filter(
+        Q(Name__icontains=query)
+        )
+    context = {
+        'heading': f'Track : {track.Name}',
+        'name': therapist.Name,
+        'sidebarOptions': therapistOptions,
+        'trackItems' : trackItems,
+        'items' : items,
+        'track_pk' : track_pk
+    }
+    return render(request, 'sehatagahiapp/therapist-add-remove-items.html', context)
+
+def addItemToTrack(request,track_pk,item_pk):
+    track = get_object_or_404(Track, pk = track_pk)
+    item = get_object_or_404(Item, pk = item_pk)
+    track.Items.add(item)
+    return HttpResponseRedirect(reverse('add-remove-item', kwargs = { 'track_pk' : track_pk }))
+
+def removeItemFromTrack(request,track_pk,item_pk):
+    track = get_object_or_404(Track, pk = track_pk)
+    item = get_object_or_404(Item, pk = item_pk)
+    track.Items.remove(item)
+    return HttpResponseRedirect(reverse('add-remove-item', kwargs = { 'track_pk' : track_pk }))
+
+def getEditTracksPage(request):
+    therapist = request.user.getTherapist()
+    therapistTracks = Track.objects.filter(user_ID = therapist)
+
+    context = {
+        'heading': "My Tracks",
+        'name': therapist.Name,
+        'sidebarOptions': therapistOptions,
+        'myTracks' : therapistTracks
+    }
+
+    return render(request, 'sehatagahiapp/therapist-view-edit-tracks.html', context)
+
+def renameTrack(request,track_pk):
+    therapist = request.user.getTherapist()
+    track = get_object_or_404(Track, pk = track_pk)
+    if request.method == 'POST':
+        form = TrackNameForm(request.POST)
+        if form.is_valid():
+            track.Name = form.cleaned_data['trackName']
+            track.save()
+
+            return HttpResponseRedirect(reverse('view-edit-tracks'))
+    else:
+        form = TrackNameForm( initial = {
+            'trackName' : track.Name
+        })
+    
+    context = {
+        'heading': "Rename Track",
+        'name': therapist.Name,
+        'sidebarOptions': therapistOptions,
+        'track' : track,
+        'form' : form
+    }
+
+    return render(request, 'sehatagahiapp/therapist-rename-track.html', context)
+
+def getTracksToAssign(request, patient_pk):
+    therapist = request.user.getTherapist()
+    all_tracks = Track.objects.all()
+
+    context = {
+        'heading': "Choose Track",
+        'name': therapist.Name,
+        'sidebarOptions': therapistPatientOptions,
+        'tracks' : all_tracks,
+        'patient_pk' : patient_pk
+    }
+
+    return render(request, 'sehatagahiapp/therapist-choose-track.html', context)
+
+def assignTracktoPatient(request,patient_pk,track_pk):
+    therapist = request.user.getTherapist()
+    track = get_object_or_404(Track, pk = track_pk)
+    trackItems = track.Items.all()
+    patient = get_object_or_404(Patient, pk = patient_pk)
+
+    if request.method == 'POST':
+        form = TrackAssignForm(request.POST)
+        
+        if form.is_valid():
+            patient_track = PatientTrack(
+                user_ID = patient, 
+                Track_ID = track, 
+                Duration = form.cleaned_data['duration'],
+                Notes = form.cleaned_data['notes']
+            )
+
+            patient_track.save()
+
+            return HttpResponseRedirect(reverse('therapist-patient-page', kwargs = {"pk" : patient_pk }))
+    else:
+        form = TrackAssignForm()
+    context = {
+        'heading': "Assign Track",
+        'name': therapist.Name,
+        'sidebarOptions': therapistPatientOptions,
+        'patient' : patient,
+        'track' : track,
+        'trackItems' : trackItems,
+        'form' : form
+    }
+
+    return render(request, 'sehatagahiapp/therapist-assign-track.html', context)
+
+
+
+
+
 

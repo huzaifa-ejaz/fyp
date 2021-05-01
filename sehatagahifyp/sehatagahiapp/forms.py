@@ -96,3 +96,11 @@ class PatientPasswordChangeForm(forms.Form):
 
 class PatientLogForm(forms.Form):
     message = forms.CharField(label='اہم واقعہ لکھیں', max_length=500, widget=forms.Textarea)
+
+class TrackNameForm(forms.Form):
+    trackName = forms.CharField(label='Name your Track (A Track is a collection of exercises)',max_length=30, validators=[validator.RegexValidator(regex=r'^[a-zA-Z][a-zA-Z ]+$')])
+
+class TrackAssignForm(forms.Form):
+    duration = forms.IntegerField(label="Duration (in weeks)", max_value = 50)
+    notes = forms.CharField(label='Instructions', max_length=1000, widget =forms.Textarea, help_text = "Please write the instructions in Urdu if possible.")
+
