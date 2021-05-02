@@ -1,2 +1,4 @@
 #Ignoring the pycache files
 *.pyc
+*.mp4
+.idea

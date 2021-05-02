@@ -1,0 +1,24 @@
+{% extends 'sehatagahiapp/dashboard-outline.html' %}
+
+{% block notification %}
+        <a href="{% url 'view-unread-logs' %}"><button type="button" class="btn btn-primary">
+            <i class="fas fa-bell px-2"></i><span class="badge bg-secondary">{{ nUnread }}</span>
+        </button></a>
+{% endblock %}
+{% block sidebar %}
+              {% for link, option in sidebarOptions.items %}
+              <li class="nav-item"><a href="{% url link %}" class="text-reset text-decoration-none">{{option}}</a></li>
+              {% endfor %}
+{% endblock %}
+
+{% block content %}
+{% for track in myTracks %}
+<div class="row pull-right">
+<div class="container border rounded p-3 mt-2 bg-light">
+    <h5>{{ track.Name }}</h5>
+    <a class="btn btn-warning" href="{% url 'rename-track' track.pk %}">Rename</a>
+    <a class="btn btn-danger" href="{% url 'add-remove-item' track.pk %}">Add/Remove Items</a>
+</div>
+</div>
+{% endfor %}
+{% endblock %}

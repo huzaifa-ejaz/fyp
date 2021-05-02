@@ -1,0 +1,26 @@
+{% extends 'sehatagahiapp/dashboard-outline.html' %}
+{% load crispy_forms_tags %}
+
+{% block notification %}
+        <a href="{% url 'view-unread-logs' %}"><button type="button" class="btn btn-primary">
+            <i class="fas fa-bell px-2"></i><span class="badge bg-secondary">{{ nUnread }}</span>
+        </button></a>
+{% endblock %}
+{% block sidebar %}
+              {% for link, option in sidebarOptions.items %}
+              <li class="nav-item"><a href="{% url link %}" class="text-reset text-decoration-none">{{option}}</a></li>
+              {% endfor %}
+{% endblock %}
+
+{% block content %}
+
+
+<div class="border rounded bg-light p-5 m-5">
+    <form action="{% url 'make-track' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{form|crispy}}
+        <input type="submit" value="Add Items to This Track" class="btn btn-primary mt-5">
+    </form>
+</div>
+
+{% endblock %}

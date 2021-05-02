@@ -1,21 +1,27 @@
-{% extends 'sehatagahiapp/patient-dashboard-outline.html' %}
+{% extends 'sehatagahiapp/dashboard-outline.html' %}
+{% load crispy_forms_tags %}
+{% block notification %}
+    <a href="{% url 'view-unread-logs' %}"><button type="button" class="btn btn-primary">
+        <i class="fas fa-bell px-2"></i><span class="badge bg-secondary">{{ nUnread }}</span>
+    </button></a>
+{% endblock %}
 
 {% block sidebar %}
               {% for link, option in sidebarOptions.items %}
-              <li class="nav-item"><a href="{% url link %}" class="text-reset text-decoration-none">{{option}}</a></li>
+              <li class="nav-item"><a href="{% url link patient.pk %}" class="text-reset text-decoration-none">{{option}}</a></li>
               {% endfor %}
 {% endblock %}
 
 {% block content %}
-{% for patientTrack in patientTracks %}
-<h4>{{ patientTrack.Track_ID.Name }}</h4>
+<h4>{{ track.Name }}</h4>
 <div class="container border rounded bg-light mr-5 p-3">
     
     <div class = "row">
         <h6>Items in this Track</h6>
     </div>
     <div class= "row ">
-    {% for x in patientTrack.Track_ID.Items.all %}
+    {% if trackItems %}
+    {% for x in trackItems %}
   
     {% if forloop.counter|divisibleby:4 %}
       <div class="col-md-3 col-sm-12 my-3">
@@ -71,7 +77,18 @@
     {% endfor %}
     <div class="row">
     </div>
+    {% else %}
+    <div class="container border rounded bg-light mr-5">
+      <p>No Items in this Track yet! Add items from below.</p>
+    </div>
+    
+    {% endif %}
     </div>
 </div>
-{% endfor %}
+<form action="{% url 'assign-track' patient.pk track.pk %}" method="post">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button type="submit" class="btn btn-warning mt-3">Assign This Track to {{ patient.Name }}</button>
+</form>
+
 {% endblock %}

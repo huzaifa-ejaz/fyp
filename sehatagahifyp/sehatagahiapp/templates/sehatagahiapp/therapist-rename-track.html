@@ -1,0 +1,23 @@
+{% extends 'sehatagahiapp/dashboard-outline.html' %}
+{% load crispy_forms_tags %}
+{% block notification %}
+        <a href="{% url 'view-unread-logs' %}"><button type="button" class="btn btn-primary">
+            <i class="fas fa-bell px-2"></i><span class="badge bg-secondary">{{ nUnread }}</span>
+        </button></a>
+{% endblock %}
+{% block sidebar %}
+              {% for link, option in sidebarOptions.items %}
+              <li class="nav-item"><a href="{% url link %}" class="text-reset text-decoration-none">{{option}}</a></li>
+              {% endfor %}
+{% endblock %}
+
+{% block content %}
+
+
+<form action="{% url 'rename-track' track.pk %}" method="post">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button type="submit" class="btn btn-primary mt-3">Rename Track</button>
+</form>
+
+{% endblock %}
