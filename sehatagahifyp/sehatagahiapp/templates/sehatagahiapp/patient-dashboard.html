@@ -7,5 +7,71 @@
 {% endblock %}
 
 {% block content %}
-<p>{{ patient.Name }}, {{ patient.Gender }}</p>
+{% for patientTrack in patientTracks %}
+<h4>{{ patientTrack.Track_ID.Name }}</h4>
+<div class="container border rounded bg-light mr-5 p-3">
+    
+    <div class = "row">
+        <h6>Items in this Track</h6>
+    </div>
+    <div class= "row ">
+    {% for x in patientTrack.Track_ID.Items.all %}
+  
+    {% if forloop.counter|divisibleby:4 %}
+      <div class="col-md-3 col-sm-12 my-3">
+        <div>
+        {{x.Name}}
+        {% if  x.Type == '1' %}
+     <video  width="100%" height="100%" controls="controls" >
+          <source src="{{x.FilePath.url}}" type="video/mp4" />
+      </video>
+  
+  
+        {% elif x.Type == '2' %}
+          <img  src="{{x.FilePath.url}}"  width="100%" height="100%">
+  
+  
+  
+  
+        {% elif x.Type == '3' %}
+        <iframe src="{{x.FilePath.url}}"  width="100%" height="100%">
+      </iframe>
+
+  
+  
+        {% endif %}
+      </div>
+        </div>
+    </div>
+      {% if not forloop.last %}
+      <div class="row ">
+      {% endif %}
+    {% else %}
+      <div class="col-md-3 col-sm-12 my-3">
+        <div>
+        {{x.Name}}
+      {% if  x.Type == '1' %}
+      <video  width="100%" height="100%" controls="controls" >
+          <source src="{{x.FilePath.url}}" type="video/mp4" />
+      </video>
+  
+  
+        {% elif x.Type == '2' %}
+          <img  src="{{x.FilePath.url}}"  width="100%" height="100%">
+  
+  
+        {% elif x.Type == '3' %}
+        <iframe  src="{{x.FilePath.url}}"  width="100%" height="100%">
+      </iframe>
+  
+        {% endif %}
+      </div>
+        </div>
+    {% endif %}
+    {% endfor %}
+    <div class="row">
+    </div>
+    </div>
+</div>
+{% endfor %}
 {% endblock %}

@@ -13,5 +13,24 @@
 {% endblock %}
 
 {% block content %}
+<h4>Assigned Tracks</h4>
+{% for patientTrack in patientTracks %}
+<div class="bg-light mt-3">
+    <h6> Name of Track: {{ patientTrack.Track_ID.Name }} </h6>
+    {% if patientTrack.isActive %}
+    <a class="btn btn-primary" href="{% url 'change-status' patient.pk patientTrack.pk %}">Decactivate</a>
+    {% else %}
+    <a class="btn btn-warning" href="{% url 'change-status' patient.pk patientTrack.pk %}">Activate</a>
+    {% endif %}
+    <br>
+    <h6>Items in this Track</h6>
+    <ul>
+    {% for item in patientTrack.Track_ID.Items.all %}
+    <li>{{ item.Name }}</li>
+    <br>
+    {% endfor %}
+    </ul>
+</div>
+{% endfor %}
 
 {% endblock %}

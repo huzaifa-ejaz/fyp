@@ -112,6 +112,7 @@ class PatientTrack(models.Model):
     Track_ID = models.ForeignKey(Track, on_delete=models.SET_NULL, null=True, related_name="PatientTrack")
     Duration = models.IntegerField()
     Notes = models.CharField(max_length=1000)
+    isActive = models.BooleanField(default=True)
 
 class PatientProgress(models.Model):
     user_ID = models.ForeignKey(PatientTrack, on_delete=models.SET_NULL, null=True, related_name="PatientProgress")

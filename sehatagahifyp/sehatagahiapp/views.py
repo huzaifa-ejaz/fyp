@@ -226,12 +226,18 @@ def addPatient(request):
 def getTherapistPatientPage(request,pk):
     therapist = request.user.getTherapist()
     patient = Patient.objects.get(pk=pk)
+    patientTracks = PatientTrack.objects.filter(user_ID = patient)
+    # tracks = []
+    # for pt in patientTrack:
+    #     tracks.append(pt.Track_ID)
+
     context = {
         'heading' : patient.Name,
         'sidebarOptions' : therapistPatientOptions,
         'name' : therapist.Name,
         'nUnread' : therapist.getNumberOfUnreadLogs(),
-        'patient' : patient
+        'patient' : patient,
+        'patientTracks' : patientTracks
     }
     return render(request, "sehatagahiapp/therapist-patient-page.html", context)
 
@@ -325,11 +331,14 @@ def changePatientPassword(request,pk):
 def getPatientDashboard(request):
     user = request.user
     patient = user.getPatient()
+    patientTracks = PatientTrack.objects.filter(user_ID = patient, isActive = True)
+
     context = {
         "name": patient.Name,
         "sidebarOptions" : patientOptions,
         "heading" : "میرا ٹریک",
-        "patient" : patient
+        "patient" : patient,
+        "patientTracks" : patientTracks
     }
 
     return render(request, "sehatagahiapp/patient-dashboard.html", context)
@@ -644,6 +653,16 @@ def assignTracktoPatient(request,patient_pk,track_pk):
     }
 
     return render(request, 'sehatagahiapp/therapist-assign-track.html', context)
+
+def changeTrackStatus(request,patient_pk,patient_track_pk):
+    patientTrack = get_object_or_404(PatientTrack, pk = patient_track_pk)
+    if patientTrack.isActive:
+        patientTrack.isActive = False
+    else:
+        patientTrack.isActive = True
+    patientTrack.save()
+
+    return HttpResponseRedirect(reverse('therapist-patient-page', kwargs = { 'pk' : patient_pk }))
 
 
 
