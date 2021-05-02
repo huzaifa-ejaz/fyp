@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from .forms import *
 import os
-
+from django.http import FileResponse
 
 # The sidebar options defined in a dictionary with the URL name as the key
 
@@ -19,6 +19,7 @@ therapistOptions = {
     'view-item' : "View/Edit Item",
     'therapist-dashboard' : "Return to Dashboard"
 
+
 }
 
 
@@ -26,7 +27,8 @@ therapistPatientOptions = {
     'edit-patient' : "Edit Patient Details",
     'therapist-patient-page' : "Return to Patient's Page",
     'change-patient-password' : "Change Patient's Password",
-    'view-logs' : "View Patient's Logs"
+    'view-logs' : "View Patient's Logs",
+    'view-report':"View Reports",
 }
 
 patientOptions = {
@@ -476,4 +478,40 @@ def deleteItem(request,pk):
         'therapistid': therapist.id
     }
     return render(request, 'sehatagahiapp/Item-view.html', context)
+
+def viewreport(request,pk):
+    therapist = request.user.getTherapist()
+    patient = get_object_or_404(Patient, pk=pk)
+    patientreport = Patient_Data.objects.filter(user_ID=patient)
+    liforeports = list(reversed(patientreport))
+    context = {
+        'heading': 'View Report',
+        "name": therapist.Name,
+        "nUnread": therapist.getNumberOfUnreadLogs,
+        "sidebarOptions": therapistPatientOptions,
+        "reports": liforeports,
+        "patient": patient
+    }
+    return render(request, 'sehatagahiapp/view-report.html',context)
+
+def addreport(request,pk):
+    therapist = request.user.getTherapist()
+    patient = get_object_or_404(Patient, pk=pk)
+    if request.method == "POST":
+        form = AddReportForm(request.POST, request.FILES)
+        if form.is_valid():
+            pd = Patient_Data(user_ID=patient, Name=form.cleaned_data['Name'], FilePath=form.cleaned_data['FilePath'])
+            pd.save()
+            return HttpResponseRedirect(reverse("view-report",kwargs={'pk':pk}))
+    else:
+        form = AddReportForm()
+    context = {
+        'heading': 'Add Report',
+        "name": therapist.Name,
+        "nUnread": therapist.getNumberOfUnreadLogs,
+        "sidebarOptions": therapistPatientOptions,
+        "patient": patient,
+        "form": form
+    }
+    return render(request, 'sehatagahiapp/add-report.html', context)
 

@@ -22,9 +22,9 @@ urlpatterns = [
     path("log/<int:log_pk>/mark-read", views.markUnreadLogRead, name="mark-unread-log"),
     path("item/view", views.viewItem, name="view-item"),
     path("item/<int:pk>/edit", views.updateItem, name="Rename-item"),
-    path("item/<int:pk>/delete", views.deleteItem, name="Delete-item")
-
-
+    path("item/<int:pk>/delete", views.deleteItem, name="Delete-item"),
+    path("patient/<int:pk>/view-report", views.viewreport, name="view-report"),
+    path("patient/<int:pk>/add-report", views.addreport, name="add-report")
 
 
 ]

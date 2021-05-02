@@ -8,19 +8,18 @@
 
 {% block sidebar %}
               {% for link, option in sidebarOptions.items %}
-              <li class="nav-item"><a href="{% url link %}" class="text-reset text-decoration-none">{{option}}</a></li>
+              <li class="nav-item"><a href="{% url link patient.pk %}" class="text-reset text-decoration-none">{{option}}</a></li>
               {% endfor %}
 {% endblock %}
 
 {% block content %}
-
-{% for patient in patients %}
-    <div class="card card-title p-3">
-        <div class="row">
-            <div class="col-1"><i class="fas fa-child fa-5x"></i></div>
-            <div class="col-5"><a href="{% url 'therapist-patient-page' patient.pk %}">{{ patient.Name }}</a></div>
-        </div>
-    </div>
-{% endfor %}
+{% load crispy_forms_tags %}
+<div class="border rounded bg-light p-5 m-5">
+    <form action="{% url 'add-report' patient.pk %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{form|crispy}}
+        <input type="submit" value="Upload" class="btn btn-primary mt-5">
+    </form>
+</div>
 
 {% endblock %}
