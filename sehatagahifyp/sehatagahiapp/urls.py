@@ -23,6 +23,8 @@ urlpatterns = [
     path("item/view", views.viewItem, name="view-item"),
     path("item/<int:pk>/edit", views.updateItem, name="Rename-item"),
     path("item/<int:pk>/delete", views.deleteItem, name="Delete-item"),
+    path("patient/<int:pk>/view-report", views.viewreport, name="view-report"),
+    path("patient/<int:pk>/add-report", views.addreport, name="add-report"),
     path("make-track", views.makeTrack, name="make-track"),
     path("track/<int:track_pk>/add-remove-item", views.addRemoveItem, name="add-remove-item"),
     path("track/<int:track_pk>/item/<int:item_pk>/add", views.addItemToTrack, name="add-item"),
@@ -31,9 +33,8 @@ urlpatterns = [
     path("track/<int:track_pk>/rename", views.renameTrack, name="rename-track"),
     path("patient/<int:patient_pk>/choose-track", views.getTracksToAssign, name="choose-track"),
     path("patient/<int:patient_pk>/track/<int:track_pk>/assign", views.assignTracktoPatient, name="assign-track"),
-    path("patient/<int:patient_pk>/patient_track/<int:patient_track_pk>/change-status", views.changeTrackStatus, name="change-status")
-
-
+    path("patient/<int:patient_pk>/patient_track/<int:patient_track_pk>/change-status", views.changeTrackStatus, name="change-status"),
+    path("patient/updateprogree/<int:item_pk>/<int:pt_pk>", views.updatePatientProgress, name="update-progress"),
 
 
 ]

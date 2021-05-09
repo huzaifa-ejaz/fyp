@@ -97,6 +97,15 @@ class PatientPasswordChangeForm(forms.Form):
 class PatientLogForm(forms.Form):
     message = forms.CharField(label='اہم واقعہ لکھیں', max_length=500, widget=forms.Textarea)
 
+class AddReportForm(forms.Form):
+    Name = forms.CharField(label='Report Name', max_length=25,validators=[validator.RegexValidator(regex=r'^[a-zA-Z][a-zA-Z ]+$')])
+    FilePath = forms.FileField(validators=[file_size])
+
+    def clean(self):
+        cleaned_data = super().clean()
+        File = cleaned_data.get("FilePath").name
+        if not ( File.endswith('.jpeg')  or File.endswith('.pdf')):
+            self.add_error('FilePath', 'Please select .jpeg for Image or .pdf for PDF')
 class TrackNameForm(forms.Form):
     trackName = forms.CharField(label='Name your Track (A Track is a collection of exercises)',max_length=30, validators=[validator.RegexValidator(regex=r'^[a-zA-Z][a-zA-Z ]+$')])
 
