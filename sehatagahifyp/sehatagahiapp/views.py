@@ -9,8 +9,8 @@ from django.contrib.auth import authenticate, login, logout
 from .forms import *
 import os
 from django.db.models import Q
-
-
+from datetime import date
+import pandas as pd
 # The sidebar options defined in a dictionary with the URL name as the key
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -226,12 +226,30 @@ def addPatient(request):
 
 @login_required
 def getTherapistPatientPage(request,pk):
+    today=date.today()
     therapist = request.user.getTherapist()
     patient = Patient.objects.get(pk=pk)
-    patientTracks = PatientTrack.objects.filter(user_ID = patient)
-    # tracks = []
-    # for pt in patientTrack:
-    #     tracks.append(pt.Track_ID)
+    patientTracks = PatientTrack.objects.filter(user_ID = patient,isActive = True)
+
+    datframelist = list()
+    for pt in patientTracks:
+        items = pt.Track_ID.Items.all()
+        index = list()
+        for i in items:
+            index.append(i.pk)
+        columnrange = ((today - pt.Date_Assign).days) // 7
+        df = pd.DataFrame(index=index, columns=range(0, columnrange + 1, 1))
+        patprog = PatientProgress.objects.filter(PTrack_ID=pt)
+        for progress in patprog:
+            df.loc[progress.Item_No, progress.Week] = progress.Done_Time
+        datframelist.append(df)
+
+    htmltable = list()
+    for df in datframelist:
+        df.rename(columns=lambda x: "Week " + str(x), inplace=True)
+        # df.index=range(0,len(index)+1,1)
+        df.rename(index=lambda x: "Item " + str(x), inplace=True)
+        htmltable.append(df.to_html(justify='justify-all', classes='table table-striped table-hover table-bordered'))
 
     context = {
         'heading' : patient.Name,
@@ -239,7 +257,8 @@ def getTherapistPatientPage(request,pk):
         'name' : therapist.Name,
         'nUnread' : therapist.getNumberOfUnreadLogs(),
         'patient' : patient,
-        'patientTracks' : patientTracks
+        'patientTracks' : patientTracks,
+        'Table':htmltable
     }
     return render(request, "sehatagahiapp/therapist-patient-page.html", context)
 
@@ -333,14 +352,36 @@ def changePatientPassword(request,pk):
 def getPatientDashboard(request):
     user = request.user
     patient = user.getPatient()
+    today = date.today()
+    #today = date(2021, 5, 18)
     patientTracks = PatientTrack.objects.filter(user_ID = patient, isActive = True)
+    datframelist=list()
+    for pt in patientTracks:
+        items=pt.Track_ID.Items.all()
+        index=list()
+        for i in items:
+            index.append(i.pk)
+        columnrange = ((today - pt.Date_Assign).days) // 7
+        df=pd.DataFrame(index=index , columns=range(0,columnrange+1,1))
+        patprog = PatientProgress.objects.filter(PTrack_ID=pt)
+        for progress in patprog:
+            df.loc[progress.Item_No,progress.Week]=progress.Done_Time
+        datframelist.append(df)
+
+    htmltable=list()
+    for df in datframelist:
+        df.rename(columns=lambda x: "Week "+str(x), inplace=True)
+        #df.index=range(0,len(index)+1,1)
+        df.rename(index=lambda x: "Item " + str(x), inplace=True)
+        htmltable.append(df.to_html(justify='justify-all',classes='table table-striped table-hover table-bordered'))
 
     context = {
         "name": patient.Name,
         "sidebarOptions" : patientOptions,
         "heading" : "میرا ٹریک",
         "patient" : patient,
-        "patientTracks" : patientTracks
+        "patientTracks" : patientTracks,
+        "Table": htmltable
     }
 
     return render(request, "sehatagahiapp/patient-dashboard.html", context)
@@ -703,7 +744,24 @@ def changeTrackStatus(request,patient_pk,patient_track_pk):
     return HttpResponseRedirect(reverse('therapist-patient-page', kwargs = { 'pk' : patient_pk }))
 
 
+def updatePatientProgress(request,item_pk,pt_pk):
+    patrack = get_object_or_404(PatientTrack, pk=pt_pk)
+    today = date.today()
+    #today=date(2021, 5, 18)
+    weekno=((today-patrack.Date_Assign).days)//7
+    patprog = PatientProgress.objects.filter(PTrack_ID=patrack)
+    if len(patprog)==0:
+        P=PatientProgress(PTrack_ID=patrack,Week=weekno,Item_No=item_pk,Done_Time=1)
+        P.save()
+    else:
+        try:
+            record=PatientProgress.objects.get(PTrack_ID=patrack ,Week=weekno, Item_No=item_pk)
+            record.Done_Time=record.Done_Time+1
+            record.save()
+        except PatientProgress.DoesNotExist:
+            P = PatientProgress(PTrack_ID=patrack, Week=weekno, Item_No=item_pk, Done_Time=1)
+            P.save()
 
-
+    return HttpResponseRedirect(reverse('patient-dashboard'))
 
 

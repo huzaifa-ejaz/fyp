@@ -115,12 +115,13 @@ class PatientTrack(models.Model):
     Duration = models.IntegerField()
     Notes = models.CharField(max_length=1000)
     isActive = models.BooleanField(default=True)
+    Date_Assign = models.DateField(auto_now_add=True)
 
 class PatientProgress(models.Model):
-    user_ID = models.ForeignKey(PatientTrack, on_delete=models.SET_NULL, null=True, related_name="PatientProgress")
-    Week = models.PositiveSmallIntegerField()
-    Item_No=models.PositiveSmallIntegerField()
-    Done_Time=models.PositiveSmallIntegerField()
+    PTrack_ID = models.ForeignKey(PatientTrack, on_delete=models.SET_NULL, null=True, related_name="PatientProgress")
+    Week = models.PositiveIntegerField(null=True)
+    Item_No=models.PositiveIntegerField(null=True)
+    Done_Time=models.PositiveIntegerField(null=True)
 
 
 
