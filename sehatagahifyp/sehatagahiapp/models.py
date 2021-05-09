@@ -94,7 +94,8 @@ class PatientLog(models.Model):
 
 class Patient_Data(models.Model):
     user_ID = models.ForeignKey(Patient, on_delete=models.SET_NULL, null=True, related_name="Data")
-    FilePath = models.CharField(max_length=64)
+    Name = models.CharField(max_length=64)
+    FilePath = models.FileField(upload_to="PatientReports/")
 
 class Item(models.Model):
     user_ID = models.ForeignKey(Therapist, on_delete=models.SET_NULL, null=True, related_name="Items")
@@ -107,16 +108,20 @@ class Track(models.Model):
     user_ID = models.ForeignKey(Therapist, on_delete=models.SET_NULL, null=True, related_name="Track")
     Name = models.CharField(max_length=64)
     Items = models.ManyToManyField(Item)
+
 class PatientTrack(models.Model):
     user_ID = models.ForeignKey(Patient, on_delete=models.SET_NULL, null=True, related_name="PatientTrack")
     Track_ID = models.ForeignKey(Track, on_delete=models.SET_NULL, null=True, related_name="PatientTrack")
     Duration = models.IntegerField()
     Notes = models.CharField(max_length=1000)
     isActive = models.BooleanField(default=True)
+    Date_Assign = models.DateField(auto_now_add=True)
 
 class PatientProgress(models.Model):
-    user_ID = models.ForeignKey(PatientTrack, on_delete=models.SET_NULL, null=True, related_name="PatientProgress")
-    Progress = models.CharField(max_length=64)
+    PTrack_ID = models.ForeignKey(PatientTrack, on_delete=models.SET_NULL, null=True, related_name="PatientProgress")
+    Week = models.PositiveIntegerField(null=True)
+    Item_No=models.PositiveIntegerField(null=True)
+    Done_Time=models.PositiveIntegerField(null=True)
 
 
 

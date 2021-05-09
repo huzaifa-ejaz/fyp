@@ -13,6 +13,16 @@
 {% endblock %}
 
 {% block content %}
+<div>
+<h4>Current Progress</h4>
+{% for t in Table %}
+<h5>Track {{forloop.counter}}</h5>
+{% autoescape off %}
+{{t}}
+<br>
+{% endautoescape %}
+{% endfor %}
+</div>
 <h4>Assigned Tracks</h4>
 {% for patientTrack in patientTracks %}
 <div class="bg-light mt-3">
