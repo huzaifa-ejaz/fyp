@@ -19,7 +19,7 @@ class Item_form(forms.Form):
 class Therapist_Register_form(forms.Form):
     Name = forms.CharField(label='Full Name',max_length=25, validators=[validator.RegexValidator(regex=r'^[a-zA-Z][a-zA-Z ]+$')])
     Username=forms.CharField(label='User Name',max_length=25,validators=[username_val])
-    MobileNumber = forms.CharField(label='Mobile Number 03xxxxxxxxx',max_length=11,validators=[validator.RegexValidator(regex=r'^[0][3][0-9]+$')])
+    MobileNumber = forms.CharField(label='Mobile Number 03xxxxxxxxx',max_length=11,validators=[validator.RegexValidator(regex=r'^[0][3][0-9]+$'), validator.MinLengthValidator(11)])
     WorkEmail = forms.EmailField(label='Work Email')
     Password = forms.CharField(label='Password',max_length=10, widget=forms.PasswordInput,validators=[validator.MinLengthValidator(limit_value=6)])
     PasswordRe= forms.CharField(label='Re-enter Password',max_length=10, widget=forms.PasswordInput,validators=[validator.MinLengthValidator(limit_value=6)])
@@ -57,7 +57,7 @@ class PatientRegisterForm(forms.Form):
     gender = forms.ChoiceField(label='Gender', choices = ((1,'Male'),(2,'Female')))
     condition = forms.CharField(label='Condition', max_length=250)
     area = forms.CharField(label='Area/City', max_length=100)
-    mobileNumber = forms.CharField(label='Caregiver Mobile Number 03xxxxxxxxx', max_length=11,validators=[validator.RegexValidator(regex=r'^[0][3][0-9]+$')])
+    mobileNumber = forms.CharField(label='Caregiver Mobile Number 03xxxxxxxxx', max_length=11,validators=[validator.RegexValidator(regex=r'^[0][3][0-9]+$'),validator.MinLengthValidator(11)])
     username=forms.CharField(label='User Name',max_length=25,validators=[username_val])
     password = forms.CharField(label='Password',max_length=10, widget=forms.PasswordInput,validators=[validator.MinLengthValidator(limit_value=6)])
     passwordRe= forms.CharField(label='Re-enter Password',max_length=10, widget=forms.PasswordInput,validators=[validator.MinLengthValidator(limit_value=6)])
@@ -80,7 +80,7 @@ class PatientEditForm(forms.Form):
     gender = forms.ChoiceField(label='Gender', choices = ((1,'Male'),(2,'Female')))
     condition = forms.CharField(label='Condition', max_length=250)
     area = forms.CharField(label='Area/City', max_length=100)
-    mobileNumber = forms.CharField(label='Caregiver Mobile Number 03xxxxxxxxx', max_length=11,validators=[validator.RegexValidator(regex=r'^[0][3][0-9]+$')])
+    mobileNumber = forms.CharField(label='Caregiver Mobile Number 03xxxxxxxxx', max_length=11,validators=[validator.RegexValidator(regex=r'^[0][3][0-9]+$'),validator.MinLengthValidator(11)])
 
 class PatientPasswordChangeForm(forms.Form):
     username = forms.CharField(label = 'User Name', widget = forms.TextInput(attrs={'readonly':'readonly'}))

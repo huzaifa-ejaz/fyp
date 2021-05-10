@@ -15,8 +15,8 @@
 {% block content %}
 <div>
 <h4>Current Progress</h4>
-{% for t in Table %}
-<h5>Track {{forloop.counter}}</h5>
+{% for name,t in name_table %}
+<h5>Track: {{ name }}</h5>
 {% autoescape off %}
 {{t}}
 <br>
@@ -28,18 +28,29 @@
 <div class="bg-light mt-3">
     <h6> Name of Track: {{ patientTrack.Track_ID.Name }} </h6>
     {% if patientTrack.isActive %}
-    <a class="btn btn-primary" href="{% url 'change-status' patient.pk patientTrack.pk %}">Decactivate</a>
+    <p>Status: Activated (Visible to Patient)</p>
+    <a class="btn btn-primary" href="{% url 'change-status' patient.pk patientTrack.pk %}">De-activate</a>
     {% else %}
+    <p>Status: De-activated (Invisible to Patient)</p>
     <a class="btn btn-warning" href="{% url 'change-status' patient.pk patientTrack.pk %}">Activate</a>
     {% endif %}
     <br>
+    <div class="mt-2">
     <h6>Items in this Track</h6>
     <ul>
     {% for item in patientTrack.Track_ID.Items.all %}
     <li>{{ item.Name }}</li>
-    <br>
     {% endfor %}
     </ul>
+    </div>
+    <h6>Given Duration</h6>
+    <div>
+        <p>{{patientTrack.Duration}} Weeks</p>
+    </div>
+    <h6>Given Intstructions/Notes</h6>
+    <div>
+        <p>{{patientTrack.Notes}}</p>
+    </div>
 </div>
 {% endfor %}
 
