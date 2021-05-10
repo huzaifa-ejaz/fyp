@@ -237,7 +237,9 @@ def getTherapistPatientPage(request,pk):
     patientTracks = PatientTrack.objects.filter(user_ID = patient)
 
     datframelist = list()
+    tracknames = list()
     for pt in patientTracks:
+        tracknames.append(pt.Track_ID.Name)
         items = pt.Track_ID.Items.all()
         index = list()
         for i in items:
@@ -255,7 +257,8 @@ def getTherapistPatientPage(request,pk):
         # df.index=range(0,len(index)+1,1)
         df.rename(index=lambda x: "Item " + str(x), inplace=True)
         htmltable.append(df.to_html(justify='justify-all', classes='table table-striped table-hover table-bordered'))
-
+    
+    name_table = zip(tracknames,htmltable)
     context = {
         'heading' : patient.Name,
         'sidebarOptions' : therapistPatientOptions,
@@ -263,7 +266,7 @@ def getTherapistPatientPage(request,pk):
         'nUnread' : therapist.getNumberOfUnreadLogs(),
         'patient' : patient,
         'patientTracks' : patientTracks,
-        'Table':htmltable
+        'name_table':name_table
     }
     return render(request, "sehatagahiapp/therapist-patient-page.html", context)
 
@@ -387,7 +390,9 @@ def getPatientDashboard(request):
     #today = date(2021, 5, 18)
     patientTracks = PatientTrack.objects.filter(user_ID = patient, isActive = True)
     datframelist=list()
+    tracknames = list()
     for pt in patientTracks:
+        tracknames.append(pt.Track_ID.Name)
         items=pt.Track_ID.Items.all()
         index=list()
         for i in items:
@@ -406,13 +411,14 @@ def getPatientDashboard(request):
         df.rename(index=lambda x: "Item " + str(x), inplace=True)
         htmltable.append(df.to_html(justify='justify-all',classes='table table-striped table-hover table-bordered'))
 
+    name_table_list = zip(tracknames,htmltable)
+
     context = {
         "name": patient.Name,
         "sidebarOptions" : patientOptions,
-        "heading" : "میرا ٹریک",
         "patient" : patient,
         "patientTracks" : patientTracks,
-        "Table": htmltable
+        "name_table": name_table_list
     }
 
     return render(request, "sehatagahiapp/patient-dashboard.html", context)
