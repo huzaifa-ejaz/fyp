@@ -11,8 +11,10 @@
     {% load static %} 
     <link rel="stylesheet" href="{% static 'sehatagahiapp/make-track.js' %}">
     <title>Hello, world!</title>
+
   </head>
   <body>
+      <nav class = "navbar" style="background-color: #52b788;" ></nav>
       <nav class = "navbar navbar-light bg-light">
         <div class="container-fluid">
         <a class="navbar-brand" href="{% url 'therapist-dashboard' %}">Sehat Agahi</a>
@@ -20,22 +22,26 @@
         {% block notification %}
         {% endblock %}
         <div class="dropdown px-2">
-            <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+            <a class="btn btn-secondary dropdown-toggle shadow" style="background-color: #52b788" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
                <i class="fas fa-user"></i> {{ name }}
             </a>
           
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-              <li><a class="dropdown-item" href="{% url 'logout' %}">Log Out</a></li>
+              <li><a class="dropdown-item"  href="{% url 'logout' %}">Log Out</a></li>
             </ul>
           </div>
         </div>
         </div>
       </nav>
       <div class="row">
-      <nav class="nav navbar-expand-sm navbar-dark text-white p-3 bg-dark col-sm-12 col-lg-2">
+      <nav class="nav navbar-expand-sm navbar-expand-md text-white p-3 col-sm-12 col-lg-2" style="background-color: #52b788; border-radius: 14px;">
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <!--<span class="navbar-toggler-icon"></span>-->
+            <i title="" class="fa fa-bars"></i>
+        </button>
+        <!--<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon" style="color: black;"></span>
-          </button>
+          </button>-->
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="nav nav-pills flex-column mb-auto">
               {% block sidebar %}

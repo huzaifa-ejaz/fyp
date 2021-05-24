@@ -2,14 +2,15 @@
 {% load crispy_forms_tags %}
 
 {% block notification %}
-    <a href="{% url 'view-unread-logs' %}"><button type="button" class="btn btn-primary">
+    <a href="{% url 'view-unread-logs' %}"><button type="button" class="btn btn-success shadow" style="background-color: #52b788;">
         <i class="fas fa-bell px-2"></i><span class="badge bg-secondary">{{ nUnread }}</span>
     </button></a>
 {% endblock %}
 
 {% block sidebar %}
               {% for link, option in sidebarOptions.items %}
-              <li class="nav-item"><a href="{% url link patient.pk %}" class="text-reset text-decoration-none">{{option}}</a></li>
+              <!--<li class="nav-item"><a href="{% url link patient.pk %}" class="text-reset text-decoration-none">{{option}}</a></li>-->
+              <button class="btn btn-outline-success shadow p-3 mb-3" type="button"><a href="{% url link patient.pk %}" class="text-white text-decoration-none">{{option}}</a></button>
               {% endfor %}
 {% endblock %}
 
