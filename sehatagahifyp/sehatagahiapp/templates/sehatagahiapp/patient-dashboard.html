@@ -7,10 +7,10 @@
 {% endblock %}
 
 {% block content %}
-<div>
-<h4>میری موجودہ پیشرفت</h4>
+<div class="border rounded bg-light m-5 p-5">
+<h3 class="text-end mb-3">میری موجودہ پیشرفت</h3>
 {% for t in Table %}
-<h5>Track {{forloop.counter}}</h5>
+<h5 class="text-end">{{forloop.counter}} ٹریک</h5>
 {% autoescape off %}
 {{t}}
 <br>
@@ -18,12 +18,13 @@
 {% endfor %}
 </div>
 {% for patientTrack in patientTracks %}
-<h4>{{ patientTrack.Track_ID.Name }}</h4>
 
 
-<div class="container border rounded bg-light mr-5 p-3">
+
+<div class="border rounded bg-light m-5 p-5">
+    <h3 class="text-end">{{ patientTrack.Track_ID.Name }}</h3>
     <div class = "row">
-        <h6>Items in this Track</h6>
+        <h5 class="text-end">:اس ٹریک میں اشیا</h5>
     </div>
     <div class= "row ">
     {% for x in patientTrack.Track_ID.Items.all %}
@@ -44,7 +45,7 @@
          <a class="btn btn-success" href="{{x.FilePath.url}}" role="button" target="_blank" rel="noopener noreferrer">دیکھیں</a>
         <a class="btn btn-warning" href="{{x.FilePath.url}}" role="button" DOWNLOAD>ڈاؤن لوڈ کریں</a>
          <a class="btn btn-warning" href="{% url 'update-progress' x.pk patientTrack.pk %}" role="button">ورزش ہو گئی</a>
-  
+
   
   
         {% elif x.Type == '3' %}
@@ -53,7 +54,7 @@
          <a class="btn btn-success" href="{{x.FilePath.url}}" role="button" target="_blank" rel="noopener noreferrer">دیکھیں</a>
         <a class="btn btn-warning" href="{{x.FilePath.url}}" role="button" DOWNLOAD>ڈاؤن لوڈ کریں</a>
          <a class="btn btn-warning" href="{% url 'update-progress' x.pk patientTrack.pk %}" role="button">ورزش ہو گئی</a>
-  
+
   
         {% endif %}
       </div>
@@ -80,7 +81,7 @@
          <a class="btn btn-success" href="{{x.FilePath.url}}" role="button" target="_blank" rel="noopener noreferrer">دیکھیں</a>
         <a class="btn btn-warning" href="{{x.FilePath.url}}" role="button" DOWNLOAD>ڈاؤن لوڈ کریں</a>
          <a class="btn btn-warning" href="{% url 'update-progress' x.pk patientTrack.pk %}" role="button">ورزش ہو گئی</a>
-  
+
         {% elif x.Type == '3' %}
         <iframe  src="{{x.FilePath.url}}"  width="100%" height="100%">
       </iframe>

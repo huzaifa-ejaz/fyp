@@ -16,7 +16,7 @@
 {% block content %}
 {% for track in tracks %}
 <div class="row pull-right">
-<div class="container border rounded p-3 mt-2 bg-light">
+<div class="border rounded p-3 mt-2 bg-light">
     <h5>{{ track.Name }}</h5>
     <a class="btn btn-warning" href="{% url 'assign-track' patient_pk track.pk %}">Assign This Track</a>
 </div>

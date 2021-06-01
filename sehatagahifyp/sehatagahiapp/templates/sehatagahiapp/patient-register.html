@@ -14,7 +14,7 @@
 {% block content %}
 {% if request.user.is_authenticated %}
 {% load crispy_forms_tags %}
-<div class="container border rounded bg-light m-5 p-5 mx-auto">
+<div class="border rounded bg-light m-5 p-5">
     <form action="{% url 'add-patient' %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{form|crispy}}

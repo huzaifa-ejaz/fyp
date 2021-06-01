@@ -107,7 +107,6 @@ def ItemUpload_view(request):
     if request.method=="POST":
         form=Item_form(request.POST,request.FILES)
         if form.is_valid():
-            
             I=Item(user_ID=therapist,Name= form.cleaned_data['Name'],FilePath= form.cleaned_data['FilePath'],Type=form.cleaned_data['Type'])
             I.save()
             return HttpResponseRedirect(reverse("item-upload"))
@@ -248,7 +247,7 @@ def getTherapistPatientPage(request,pk):
     for df in datframelist:
         df.rename(columns=lambda x: "Week " + str(x), inplace=True)
         # df.index=range(0,len(index)+1,1)
-        df.rename(index=lambda x: "Item " + str(x), inplace=True)
+        df.rename(index=lambda x: "Item : " + get_object_or_404(Item,pk=x).Name, inplace=True)
         htmltable.append(df.to_html(justify='justify-all', classes='table table-striped table-hover table-bordered'))
 
     context = {
@@ -370,15 +369,15 @@ def getPatientDashboard(request):
 
     htmltable=list()
     for df in datframelist:
-        df.rename(columns=lambda x: "Week "+str(x), inplace=True)
+        df.rename(columns=lambda x: " ہفتہ : "+str(x), inplace=True)
         #df.index=range(0,len(index)+1,1)
-        df.rename(index=lambda x: "Item " + str(x), inplace=True)
+        df.rename(index=lambda x: get_object_or_404(Item,pk=x).Name + " : آئٹم  ", inplace=True)
         htmltable.append(df.to_html(justify='justify-all',classes='table table-striped table-hover table-bordered'))
 
     context = {
         "name": patient.Name,
         "sidebarOptions" : patientOptions,
-        "heading" : "میرا ٹریک",
+        "heading" : "میری پیشرفت اور ٹریک",
         "patient" : patient,
         "patientTracks" : patientTracks,
         "Table": htmltable
@@ -521,8 +520,11 @@ def deleteItem(request,pk):
     all_Item = Item.objects.all()
     therapist = request.user.getTherapist()
     deleteitem=Item.objects.filter(pk=pk)
-    os.remove(os.path.join(BASE_DIR,str(deleteitem[0].FilePath)))
-    deleteitem.delete()
+    try:
+        os.remove(os.path.join(BASE_DIR,str(deleteitem[0].FilePath)))
+        deleteitem.delete()
+    except:
+        deleteitem.delete()
 
     context = {
         'heading': 'Item View/Edit',

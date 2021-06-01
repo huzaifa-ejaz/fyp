@@ -12,22 +12,23 @@
 {% if message %}
 <div class="alert alert-success text-center">{{ message }}</div>
 {% endif %}
+<div class="border rounded bg-light m-5 p-5">
 <form action="{% url 'add-log'  %}" method="post">
     {% csrf_token %}
     {{ form|crispy }}
     <button type="submit" class="btn btn-primary mt-3">واقعہ محفوظ کریں</button>
 </form>
-
+</div>
 {% if logs %}
 {% for log in logs %}
-<div class="card p-3 mt-3">
+<div class="card p-5 mt-3 mx-5">
     <p class="fw-bold">{{ log.DateTimeAdded }}</p>
     <p>{{ log.Message }}</p>
 </div>
 {% endfor %}
 {% else %}
-<div class="card p-3 mt-3 fw-bold">
-    فی الحال کوئ واقعہ محفوظ نہیں
+<div class="card p-5 mt-3 mx-5 fw-bold">
+    <p class="text-end">.فی الحال کوئ واقعہ محفوظ نہیں   </p>
 </div>
 {% endif %}
 

@@ -14,7 +14,7 @@
 
 {% block content %}
 <h4>{{ track.Name }}</h4>
-<div class="container border rounded bg-light mr-5 p-3">
+<div class="border rounded bg-light m-5 p-5">
     
     <div class = "row">
         <h6>Items in this Track</h6>
@@ -85,10 +85,11 @@
     {% endif %}
     </div>
 </div>
+<div class="border rounded bg-light m-5 p-5">
 <form action="{% url 'assign-track' patient.pk track.pk %}" method="post">
     {% csrf_token %}
     {{ form|crispy }}
     <button type="submit" class="btn btn-warning mt-3">Assign This Track to {{ patient.Name }}</button>
 </form>
-
+</div>
 {% endblock %}
