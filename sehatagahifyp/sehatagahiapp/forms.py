@@ -23,7 +23,7 @@ class Item_form(forms.Form):
 class Therapist_Register_form(forms.Form):
     Name = forms.CharField(label='Full Name',max_length=25, validators=[validator.RegexValidator(regex=r'^[a-zA-Z][a-zA-Z ]+$')])
     Username=forms.CharField(label='User Name',max_length=25,validators=[username_val])
-    MobileNumber = forms.CharField(label='Mobile Number 03xxxxxxxxx',max_length=11,validators=[validator.RegexValidator(regex=r'^[0][3][0-9]+$')])
+    MobileNumber = forms.CharField(label='Mobile Number 03xxxxxxxxx',max_length=11,validators=[validator.RegexValidator(regex=r'^[0][3][0-9]+$'), validator.MinLengthValidator(11)])
     WorkEmail = forms.EmailField(label='Work Email')
     Password = forms.CharField(label='Password',max_length=10, widget=forms.PasswordInput,validators=[validator.MinLengthValidator(limit_value=6)])
     PasswordRe= forms.CharField(label='Re-enter Password',max_length=10, widget=forms.PasswordInput,validators=[validator.MinLengthValidator(limit_value=6)])
