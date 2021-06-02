@@ -1,3 +1,4 @@
+from sehatagahiapp.models import AuthorizedEmail, Therapist
 from django import forms
 import django.core.validators as validator
 from .validators import *
@@ -23,8 +24,8 @@ class Therapist_Register_form(forms.Form):
     WorkEmail = forms.EmailField(label='Work Email')
     Password = forms.CharField(label='Password',max_length=10, widget=forms.PasswordInput,validators=[validator.MinLengthValidator(limit_value=6)])
     PasswordRe= forms.CharField(label='Re-enter Password',max_length=10, widget=forms.PasswordInput,validators=[validator.MinLengthValidator(limit_value=6)])
-    SecurityQs1 = forms.CharField(label='Security Qs1: First and Last letter of Father\'s name',max_length=100)
-    SecurityQs2 = forms.CharField(label='Security Qs1: First and Last letter of birth city',max_length=100)
+    SecurityQs1 = forms.CharField(label='Security Qs1: First and Last letter of Father\'s name',max_length=2)
+    SecurityQs2 = forms.CharField(label='Security Qs1: First and Last letter of birth city',max_length=2)
     def clean(self):
         cleaned_data = super().clean()
         password = cleaned_data.get("Password")
@@ -34,6 +35,19 @@ class Therapist_Register_form(forms.Form):
             self.add_error('PasswordRe', 'The password does not match')
         if '@sehatagahi.com' not  in email:
             self.add_error('WorkEmail', 'Please enter the correct email')
+        
+        #Checking if the provided email is an authorized email
+        try:
+            authorizedEmail = AuthorizedEmail.objects.get(WorkEmail__exact=email)
+        except AuthorizedEmail.DoesNotExist:
+            self.add_error('WorkEmail','Please enter a valid email')
+        
+        #Checking if the provided email is already in use by another user
+        try:
+            therapist = Therapist.objects.get(WorkEmail__exact = email)
+            self.add_error('WorkEmail','This email is already in use by another user')
+        except Therapist.DoesNotExist:
+            pass
 
 
 

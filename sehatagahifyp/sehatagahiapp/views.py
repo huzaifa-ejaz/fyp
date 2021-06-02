@@ -537,8 +537,9 @@ def markUnreadLogRead(request,log_pk):
 
 @login_required
 def viewItem(request):
-    all_Item = Item.objects.all()
     therapist = request.user.getTherapist()
+    all_Item = Item.objects.filter(user_ID = therapist)
+    
     context = {
         'heading': 'Item View/Edit',
         'name': therapist.Name,
@@ -550,8 +551,11 @@ def viewItem(request):
 
 @login_required
 def updateItem(request,pk):
-    all_Item = Item.objects.all()
+    
     therapist = request.user.getTherapist()
+    instance = Item.objects.get(pk=pk)
+    if instance.user_ID != therapist:
+        return HttpResponseRedirect(reverse('access-restricted'))
     if request.method == "POST":
         form = Item_Rename_form(request.POST)
         if form.is_valid():
@@ -573,10 +577,11 @@ def updateItem(request,pk):
 
 @login_required
 def deleteItem(request,pk):
-    all_Item = Item.objects.all()
     therapist = request.user.getTherapist()
-    deleteitem=Item.objects.filter(pk=pk)
-    os.remove(os.path.join(BASE_DIR,str(deleteitem[0].FilePath)))
+    deleteitem=Item.objects.get(pk=pk)
+    if deleteitem.user_ID != therapist:
+        return HttpResponseRedirect(reverse('access-restricted'))
+    os.remove(os.path.join(BASE_DIR,str(deleteitem.FilePath)))
     deleteitem.delete()
 
     context = {
@@ -591,6 +596,8 @@ def deleteItem(request,pk):
 def viewreport(request,pk):
     therapist = request.user.getTherapist()
     patient = get_object_or_404(Patient, pk=pk)
+    if patient.Therapist != therapist:
+        return HttpResponseRedirect(reverse('access-restricted'))
     patientreport = Patient_Data.objects.filter(user_ID=patient)
     liforeports = list(reversed(patientreport))
     context = {
@@ -606,6 +613,8 @@ def viewreport(request,pk):
 def addreport(request,pk):
     therapist = request.user.getTherapist()
     patient = get_object_or_404(Patient, pk=pk)
+    if patient.Therapist != therapist:
+        return HttpResponseRedirect(reverse('access-restricted'))
     if request.method == "POST":
         form = AddReportForm(request.POST, request.FILES)
         if form.is_valid():
@@ -623,30 +632,6 @@ def addreport(request,pk):
         "form": form
     }
     return render(request, 'sehatagahiapp/add-report.html', context)
-
-# def makeTrack(request):
-#     all_Item = Item.objects.all()
-#     all_Track = Track.objects.all()
-#     therapist = request.user.getTherapist()
-#     if request.method == "POST":
-#         t = Track(user_ID=therapist,Name=request.POST["track"])
-#         t.save()
-#         for capital in request.POST.values():
-#             if capital.isdigit():
-#                 instance = Item.objects.get(id=capital)
-#                 t.Items.add(instance)
-#                 #print(capital)
-#         t.save()
-#         return HttpResponseRedirect(reverse("make-track"))
-
-#     context = {
-#         'heading': 'Make a Track',
-#         'name': therapist.Name,
-#         'sidebarOptions': therapistOptions,
-#         'all': all_Item,
-#         'all2': all_Track
-#     }
-#     return render(request, 'sehatagahiapp/make-track.html', context)
 
 @login_required
 def makeTrack(request):
@@ -675,6 +660,8 @@ def makeTrack(request):
 def addRemoveItem(request, track_pk):
     therapist = request.user.getTherapist()
     track = get_object_or_404(Track, pk=track_pk)
+    if track.user_ID != therapist:
+        return HttpResponseRedirect(reverse('access-restricted'))
     trackItems = track.Items.all()
     items = Item.objects.exclude(track = track_pk)
     query = request.GET.get("q")
@@ -694,14 +681,20 @@ def addRemoveItem(request, track_pk):
 
 @login_required
 def addItemToTrack(request,track_pk,item_pk):
+    therapist = request.user.getTherapist()
     track = get_object_or_404(Track, pk = track_pk)
+    if track.user_ID != therapist:
+        return HttpResponseRedirect(reverse('access-restricted'))
     item = get_object_or_404(Item, pk = item_pk)
     track.Items.add(item)
     return HttpResponseRedirect(reverse('add-remove-item', kwargs = { 'track_pk' : track_pk }))
 
 @login_required
 def removeItemFromTrack(request,track_pk,item_pk):
+    therapist = request.user.getTherapist()
     track = get_object_or_404(Track, pk = track_pk)
+    if track.user_ID != therapist:
+        return HttpResponseRedirect(reverse('access-restricted'))
     item = get_object_or_404(Item, pk = item_pk)
     track.Items.remove(item)
     return HttpResponseRedirect(reverse('add-remove-item', kwargs = { 'track_pk' : track_pk }))
@@ -724,6 +717,8 @@ def getEditTracksPage(request):
 def renameTrack(request,track_pk):
     therapist = request.user.getTherapist()
     track = get_object_or_404(Track, pk = track_pk)
+    if track.user_ID != therapist:
+        return HttpResponseRedirect(reverse('access-restricted'))
     if request.method == 'POST':
         form = TrackNameForm(request.POST)
         if form.is_valid():
@@ -749,6 +744,9 @@ def renameTrack(request,track_pk):
 @login_required
 def getTracksToAssign(request, patient_pk):
     therapist = request.user.getTherapist()
+    patient = get_object_or_404(Patient, pk = patient_pk)
+    if patient.Therapist != therapist:
+        return HttpResponseRedirect(reverse('access-restricted'))
     all_tracks = Track.objects.all()
 
     context = {
@@ -767,6 +765,8 @@ def assignTracktoPatient(request,patient_pk,track_pk):
     track = get_object_or_404(Track, pk = track_pk)
     trackItems = track.Items.all()
     patient = get_object_or_404(Patient, pk = patient_pk)
+    if patient.Therapist != therapist:
+        return HttpResponseRedirect(reverse('access-restricted'))
 
     if request.method == 'POST':
         form = TrackAssignForm(request.POST)
@@ -798,6 +798,10 @@ def assignTracktoPatient(request,patient_pk,track_pk):
 
 @login_required
 def changeTrackStatus(request,patient_pk,patient_track_pk):
+    therapist = request.user.getTherapist()
+    patient = get_object_or_404(Patient, pk=patient_pk)
+    if patient.Therapist != therapist:
+        return HttpResponseRedirect(reverse('access-restricted'))
     patientTrack = get_object_or_404(PatientTrack, pk = patient_track_pk)
     if patientTrack.isActive:
         patientTrack.isActive = False
@@ -809,7 +813,10 @@ def changeTrackStatus(request,patient_pk,patient_track_pk):
 
 
 def updatePatientProgress(request,item_pk,pt_pk):
+    patient = request.user.getPatient()
     patrack = get_object_or_404(PatientTrack, pk=pt_pk)
+    if patrack.user_ID != patient:
+        return HttpResponseRedirect(reverse('access-restricted'))
     today = date.today()
     #today=date(2021, 5, 30)
     weekno=((today-patrack.Date_Assign).days)//7
@@ -827,5 +834,18 @@ def updatePatientProgress(request,item_pk,pt_pk):
             P.save()
 
     return HttpResponseRedirect(reverse('patient-dashboard'))
+
+def viewVideoItem(request,item_pk):
+    therapist = request.user.getTherapist()
+    video = get_object_or_404(Item, pk = item_pk)
+
+    context = {
+        'heading' : f'View: {video.Name}',
+        'name' : therapist.Name,
+        'sidebarOptions' : therapistOptions,
+        'video' : video
+    }
+    
+    return render(request, 'sehatagahiapp/therapist-view-video.html', context)
 
 

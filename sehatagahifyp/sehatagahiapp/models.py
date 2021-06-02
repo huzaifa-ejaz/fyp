@@ -29,7 +29,9 @@ class User(AbstractUser):
         return None
 
 
-
+class AuthorizedEmail(models.Model):
+    WorkEmail = models.EmailField(max_length=64)
+    
 class Therapist(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     Name = models.CharField(max_length=64)

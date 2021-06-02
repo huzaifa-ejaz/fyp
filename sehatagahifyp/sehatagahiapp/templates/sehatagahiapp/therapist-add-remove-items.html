@@ -1,4 +1,5 @@
 {% extends 'sehatagahiapp/dashboard-outline.html' %}
+{% load static %}
 {% load crispy_forms_tags %}
 
 {% block notification %}
@@ -24,23 +25,20 @@
     {% if forloop.counter|divisibleby:4 %}
       <div class="col-md-3 col-sm-12 my-3">
         <div>
-        {{x.Name}}
+        <p class="fw-bold">{{x.Name}}</p>
         {% if  x.Type == '1' %}
-     <video  width="100%" height="100%" controls="controls" >
-          <source src="{{x.FilePath.url}}" type="video/mp4" />
-      </video>
+        <a href="{% url 'view-video' x.pk%}"><img src="{% static 'sehatagahiapp/video_icon.png' %}" height="100%" width="100%"></a>
   <a class="btn btn-danger" href="{% url 'remove-item' track_pk x.pk %}" role="button">Remove from Track</a>
   
   
         {% elif x.Type == '2' %}
-          <img  src="{{x.FilePath.url}}"  width="100%" height="100%">
+        <a href="{{x.FilePath.url}}" role="button" target="_blank" rel="noopener noreferrer"><img  src="{{x.FilePath.url}}"  width="100%" height="100%"></a>
   
   <a class="btn btn-danger" href="{% url 'remove-item' track_pk x.pk %}" role="button">Remove from Track</a>
   
   
         {% elif x.Type == '3' %}
-        <iframe src="{{x.FilePath.url}}"  width="100%" height="100%">
-      </iframe>
+        <a href="{{x.FilePath.url}}" role="button" target="_blank" rel="noopener noreferrer"><img src="{% static 'sehatagahiapp/document_icon.png' %}" height="100%" width="100%"></a>
   <a class="btn btn-danger" href="{% url 'remove-item' track_pk x.pk %}" role="button">Remove from Track</a>
   
   
@@ -54,23 +52,20 @@
     {% else %}
       <div class="col-md-3 col-sm-12 my-3">
         <div>
-        {{x.Name}}
+          <p class="fw-bold">{{x.Name}}</p>
       {% if  x.Type == '1' %}
-      <video  width="100%" height="100%" controls="controls" >
-          <source src="{{x.FilePath.url}}" type="video/mp4" />
-      </video>
+      <a href="{% url 'view-video' x.pk%}"><img src="{% static 'sehatagahiapp/video_icon.png' %}" height="100%" width="100%"></a>
   
   <a class="btn btn-danger" href="{% url 'remove-item' track_pk x.pk %}" role="button">Remove from Track</a>
   
   
         {% elif x.Type == '2' %}
-          <img  src="{{x.FilePath.url}}"  width="100%" height="100%">
+        <a href="{{x.FilePath.url}}" role="button" target="_blank" rel="noopener noreferrer"><img  src="{{x.FilePath.url}}"  width="100%" height="100%"></a>
   
   <a class="btn btn-danger" href="{% url 'remove-item' track_pk x.pk %}" role="button">Remove from Track</a>
   
         {% elif x.Type == '3' %}
-        <iframe  src="{{x.FilePath.url}}"  width="100%" height="100%">
-      </iframe>
+        <a href="{{x.FilePath.url}}" role="button" target="_blank" rel="noopener noreferrer"><img src="{% static 'sehatagahiapp/document_icon.png' %}" height="100%" width="100%"></a>
   
   <a class="btn btn-danger" href="{% url 'remove-item' track_pk x.pk %}" role="button">Remove from Track</a>
         {% endif %}
@@ -106,23 +101,20 @@
     {% if forloop.counter|divisibleby:4 %}
       <div class="col-md-3 col-sm-12 my-3">
         <div>
-        {{x.Name}}
+          <p class="fw-bold">{{x.Name}}</p>
         {% if  x.Type == '1' %}
-     <video  width="100%" height="100%" controls="controls" >
-          <source src="{{x.FilePath.url}}" type="video/mp4" />
-      </video>
+        <a href="{% url 'view-video' x.pk%}"><img src="{% static 'sehatagahiapp/video_icon.png' %}" height="100%" width="100%"></a>
   <a class="btn btn-primary" href="{% url 'add-item' track_pk x.pk %}" role="button">Add to Track</a>
   
   
         {% elif x.Type == '2' %}
-          <img  src="{{x.FilePath.url}}"  width="100%" height="100%">
+        <a href="{{x.FilePath.url}}" role="button" target="_blank" rel="noopener noreferrer"><img  src="{{x.FilePath.url}}"  width="100%" height="100%"></a>
   
   <a class="btn btn-primary" href="{% url 'add-item' track_pk x.pk %}" role="button">Add to Track</a>
   
   
         {% elif x.Type == '3' %}
-        <iframe src="{{x.FilePath.url}}"  width="100%" height="100%">
-      </iframe>
+        <a href="{{x.FilePath.url}}" role="button" target="_blank" rel="noopener noreferrer"><img src="{% static 'sehatagahiapp/document_icon.png' %}" height="100%" width="100%"></a>
   <a class="btn btn-primary" href="{% url 'add-item' track_pk x.pk %}" role="button">Add to Track</a>
   
   
@@ -136,23 +128,20 @@
     {% else %}
       <div class="col-md-3 col-sm-12 my-3">
         <div>
-        {{x.Name}}
+          <p class="fw-bold">{{x.Name}}</p>
       {% if  x.Type == '1' %}
-      <video  width="100%" height="100%" controls="controls" >
-          <source src="{{x.FilePath.url}}" type="video/mp4" />
-      </video>
+      <a href="{% url 'view-video' x.pk%}"><img src="{% static 'sehatagahiapp/video_icon.png' %}" height="100%" width="100%"></a>
   
   <a class="btn btn-primary" href="{% url 'add-item' track_pk x.pk %}" role="button">Add to Track</a>
   
   
         {% elif x.Type == '2' %}
-          <img  src="{{x.FilePath.url}}"  width="100%" height="100%">
+        <a href="{{x.FilePath.url}}" role="button" target="_blank" rel="noopener noreferrer"><img  src="{{x.FilePath.url}}"  width="100%" height="100%"></a>
   
   <a class="btn btn-primary" href="{% url 'add-item' track_pk x.pk %}" role="button">Add to Track</a>
   
         {% elif x.Type == '3' %}
-        <iframe  src="{{x.FilePath.url}}"  width="100%" height="100%">
-      </iframe>
+        <a href="{{x.FilePath.url}}" role="button" target="_blank" rel="noopener noreferrer"><img src="{% static 'sehatagahiapp/document_icon.png' %}" height="100%" width="100%"></a>
   
   <a class="btn btn-primary" href="{% url 'add-item' track_pk x.pk %}" role="button">Add to Track</a>
         {% endif %}

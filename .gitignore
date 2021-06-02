@@ -3,3 +3,5 @@
 *.mp4
 .idea
 *.png
+!document_icon.png
+!video_icon.png
