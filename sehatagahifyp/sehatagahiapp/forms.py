@@ -5,7 +5,7 @@ from django.conf import settings
 
 
 class Item_form(forms.Form):
-    Name = forms.CharField(label='Item Name',max_length=25, validators=[validator.RegexValidator(regex=r'^[a-zA-Z][a-zA-Z]+\s?[0-9]*$',message='Name needs to be alphabets followed by optional space and/or optional numeric digits.')])
+    Name = forms.CharField(label='Item Name',max_length=25, validators=[validator.RegexValidator(regex=r'^[a-zA-Z][a-zA-Z\s]+[0-9]*$',message='Name needs to be alphabets followed by optional space and/or optional numeric digits.')])
     Type = forms.ChoiceField(label='Item Type',help_text='Please select the Item type from the drop down.',choices=(('1','Video'), ('2','Image'), ('3','PDF')))
     FilePath = forms.FileField(help_text='<br/>File formats:<br/>Video : mp4<br/>Image : png<br/>PDF : pdf')
     def clean(self):
@@ -47,7 +47,7 @@ class LoginForm(forms.Form):
     password = forms.CharField(label="Password", widget = forms.PasswordInput(), max_length=60)
 
 class Item_Rename_form(forms.Form):
-    ReName = forms.CharField(label='Item Name',max_length=25,help_text="Please rename your item.", validators=[validator.RegexValidator(regex=r'^[a-zA-Z][a-zA-Z]+\s?[0-9]*$',message='Name needs to be alphabets followed by optional space and/or optional numeric digits.')])
+    ReName = forms.CharField(label='Item Name',max_length=25,help_text="Please rename your item.", validators=[validator.RegexValidator(regex=r'^[a-zA-Z][a-zA-Z\s]+[0-9]*$',message='Name needs to be alphabets followed by optional space and/or optional numeric digits.')])
 
 
 class PatientRegisterForm(forms.Form):
@@ -117,7 +117,7 @@ class PatientLogForm(forms.Form):
     message = forms.CharField(label='اہم واقعہ لکھیں', max_length=500, widget=forms.Textarea)
 
 class AddReportForm(forms.Form):
-    Name = forms.CharField(label='Item Name',max_length=25, validators=[validator.RegexValidator(regex=r'^[a-zA-Z][a-zA-Z]+\s?[0-9]*$',message='Name needs to be alphabets followed by optional space and/or optional numeric digits.')])
+    Name = forms.CharField(label='Item Name',max_length=25, validators=[validator.RegexValidator(regex=r'^[a-zA-Z][a-zA-Z\s]+[0-9]*$',message='Name needs to be alphabets followed by optional space and/or optional numeric digits.')])
     FilePath = forms.FileField(help_text='<br/>File formats:<br/>Image : png<br/>PDF : pdf')
 
     def clean(self):
@@ -130,7 +130,7 @@ class AddReportForm(forms.Form):
             self.add_error('FilePath','Maximum file size is 50MB')
 
 class TrackNameForm(forms.Form):
-    trackName = forms.CharField(label='Track Name',help_text='Please name your track, remember a track is a collection of exercises',max_length=30, validators=[validator.RegexValidator(regex=r'^[a-zA-Z][a-zA-Z]+\s?[0-9]*$',message='Name needs to be alphabets followed by optional space and/or optional numeric digits.')])
+    trackName = forms.CharField(label='Track Name',help_text='Please name your track, remember a track is a collection of exercises',max_length=30, validators=[validator.RegexValidator(regex=r'^[a-zA-Z][a-zA-Z\s]+[0-9]*$',message='Name needs to be alphabets followed by optional space and/or optional numeric digits.')])
 
 class TrackAssignForm(forms.Form):
     duration = forms.IntegerField(label="Duration" ,help_text ='In number of weeks.', max_value = 10)

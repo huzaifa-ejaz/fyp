@@ -9,7 +9,7 @@
 {% block sidebar %}
               {% for link, option in sidebarOptions.items %}
               <!--<li class="nav-item"><a href="{% url link patient.pk %}" class="text-reset text-decoration-none">{{option}}</a></li>-->
-              <button class="btn btn-outline-success" type="button"><a href="{% url link patient.pk %}" class="text-white text-decoration-none">{{option}}</a></button>
+              <button class="btn btn-outline-success shadow p-3 mb-3" type="button"><a href="{% url link patient.pk %}" class="text-white text-decoration-none">{{option}}</a></button>
               {% endfor %}
 {% endblock %}
 

@@ -543,6 +543,7 @@ def viewItem(request):
         'heading': 'Item View/Edit',
         'name': therapist.Name,
         'sidebarOptions': therapistOptions,
+        'nUnread': therapist.getNumberOfUnreadLogs(),
         'all': all_Item,
         'therapistid':therapist.id
     }
@@ -566,6 +567,7 @@ def updateItem(request,pk):
         'heading': 'Item Edit',
         'name': therapist.Name,
         'sidebarOptions': therapistOptions,
+        'nUnread': therapist.getNumberOfUnreadLogs(),
         'form': form,
         'itempk':pk
     }
@@ -586,6 +588,7 @@ def deleteItem(request,pk):
         'heading': 'Item View/Edit',
         'name': therapist.Name,
         'sidebarOptions': therapistOptions,
+        'nUnread': therapist.getNumberOfUnreadLogs(),
         'all': all_Item,
         'therapistid': therapist.id
     }
@@ -669,7 +672,8 @@ def makeTrack(request):
         'heading': 'Make a Track',
         'name': therapist.Name,
         'sidebarOptions': therapistOptions,
-        'form' : form
+        'form' : form,
+        'nUnread': therapist.getNumberOfUnreadLogs()
     }
 
     return render(request, 'sehatagahiapp/therapist-track-name.html', context)
@@ -691,7 +695,8 @@ def addRemoveItem(request, track_pk):
         'sidebarOptions': therapistOptions,
         'trackItems' : trackItems,
         'items' : items,
-        'track_pk' : track_pk
+        'track_pk' : track_pk,
+        'nUnread': therapist.getNumberOfUnreadLogs()
     }
     return render(request, 'sehatagahiapp/therapist-add-remove-items.html', context)
 
@@ -718,7 +723,8 @@ def getEditTracksPage(request):
         'heading': "My Tracks",
         'name': therapist.Name,
         'sidebarOptions': therapistOptions,
-        'myTracks' : therapistTracks
+        'myTracks' : therapistTracks,
+        'nUnread': therapist.getNumberOfUnreadLogs()
     }
 
     return render(request, 'sehatagahiapp/therapist-view-edit-tracks.html', context)
@@ -744,7 +750,8 @@ def renameTrack(request,track_pk):
         'name': therapist.Name,
         'sidebarOptions': therapistOptions,
         'track' : track,
-        'form' : form
+        'form' : form,
+        'nUnread': therapist.getNumberOfUnreadLogs()
     }
 
     return render(request, 'sehatagahiapp/therapist-rename-track.html', context)
@@ -752,6 +759,7 @@ def renameTrack(request,track_pk):
 @login_required
 def getTracksToAssign(request, patient_pk):
     therapist = request.user.getTherapist()
+    patient = get_object_or_404(Patient, pk=patient_pk)
     all_tracks = Track.objects.all()
 
     context = {
@@ -759,7 +767,8 @@ def getTracksToAssign(request, patient_pk):
         'name': therapist.Name,
         'sidebarOptions': therapistPatientOptions,
         'tracks' : all_tracks,
-        'patient_pk' : patient_pk
+        'patient' : patient,
+        'nUnread': therapist.getNumberOfUnreadLogs()
     }
 
     return render(request, 'sehatagahiapp/therapist-choose-track.html', context)
@@ -794,7 +803,8 @@ def assignTracktoPatient(request,patient_pk,track_pk):
         'patient' : patient,
         'track' : track,
         'trackItems' : trackItems,
-        'form' : form
+        'form' : form,
+        'nUnread': therapist.getNumberOfUnreadLogs()
     }
 
     return render(request, 'sehatagahiapp/therapist-assign-track.html', context)
