@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+import django.core.validators as validator
 from .validators import file_size
 from datetime import datetime, date
 
@@ -30,7 +31,7 @@ class User(AbstractUser):
 
 
 class AuthorizedEmail(models.Model):
-    WorkEmail = models.EmailField(max_length=64)
+    WorkEmail = models.EmailField(max_length=64, validators = [validator.RegexValidator(regex = r'@sehatagahi.com$')])
     
 class Therapist(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
