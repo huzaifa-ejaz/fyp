@@ -10,14 +10,16 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
     <link href="sticky-footer.css" rel="stylesheet">
     <title>Hello, world!</title>
+
   </head>
   <body>
-      <nav class = "navbar navbar-light bg-light">
+       <nav class = "navbar" style="background-color: #52b788;" ></nav>
+       <nav class = "navbar navbar-light bg-light">
         <div class="container-fluid">
-        <a class="navbar-brand" href="{% url 'therapist-dashboard' %}">Sehat Agahi</a>
+        <a class="navbar-brand" href="{% url 'patient-dashboard' %}">Sehat Agahi</a>
         <div class="d-flex flex-row">
         <div class="dropdown px-2">
-            <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+            <a class="btn btn-secondary dropdown-toggle" style="background-color: #52b788" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
                <i class="fas fa-user"></i> {{ name }}
             </a>
           
@@ -29,9 +31,11 @@
         </div>
       </nav>
       <div class="row">
-      <nav class="nav navbar-expand-sm navbar-dark text-white p-3 bg-dark col-sm-12 col-lg-2">
+      <!--<nav class="nav navbar-expand-sm navbar-dark text-white p-3 bg-dark col-sm-12 col-lg-2">-->
+      <nav class="nav navbar-expand-sm navbar-expand-md text-white p-3 col-sm-12 col-lg-2" style="background-color: #52b788; border-radius: 25px;">
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon" style="color: black;"></span>
+            <!--<span class="navbar-toggler-icon" style="color: black;"></span>-->
+            <i title="" class="fa fa-bars"></i>
           </button>
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="nav nav-pills flex-column mb-auto">
@@ -41,7 +45,7 @@
         </div>
     </nav>
     <div class="col-sm-12 col-lg-10">
-        <h3 class="p-3">{{ heading }}</h3>
+        <h1 class="m-5 text-end">{{ heading }}</h1>
         {% block content %}
         {% endblock %}
     </div>

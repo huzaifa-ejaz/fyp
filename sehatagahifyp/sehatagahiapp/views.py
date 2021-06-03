@@ -106,7 +106,6 @@ def ItemUpload_view(request):
     if request.method=="POST":
         form=Item_form(request.POST,request.FILES)
         if form.is_valid():
-            
             I=Item(user_ID=therapist,Name= form.cleaned_data['Name'],FilePath= form.cleaned_data['FilePath'],Type=form.cleaned_data['Type'])
             I.save()
             return HttpResponseRedirect(reverse("item-upload"))
@@ -230,10 +229,10 @@ def getTherapistPatientPage(request,pk):
         patient = Patient.objects.get(pk=pk, Therapist = therapist)
     except Patient.DoesNotExist:
         patient = None
-    
+
     if patient == None:
         return HttpResponseRedirect(reverse('access-restricted'))
-    
+
     patientTracks = PatientTrack.objects.filter(user_ID = patient)
 
     datframelist = list()
@@ -255,9 +254,9 @@ def getTherapistPatientPage(request,pk):
     for df in datframelist:
         df.rename(columns=lambda x: "Week " + str(x), inplace=True)
         # df.index=range(0,len(index)+1,1)
-        df.rename(index=lambda x: "Item " + str(x), inplace=True)
+        df.rename(index=lambda x: "Item : " + get_object_or_404(Item,pk=x).Name, inplace=True)
         htmltable.append(df.to_html(justify='justify-all', classes='table table-striped table-hover table-bordered'))
-    
+
     name_table = zip(tracknames,htmltable)
     context = {
         'heading' : patient.Name,
@@ -290,7 +289,7 @@ def editPatient(request,pk):
         patient = Patient.objects.get(pk=pk, Therapist = therapist)
     except Patient.DoesNotExist:
         patient = None
-    
+
     if patient == None:
         return HttpResponseRedirect(reverse('access-restricted'))
 
@@ -347,10 +346,10 @@ def changePatientPassword(request,pk):
         patient = Patient.objects.get(pk=pk, Therapist = therapist)
     except Patient.DoesNotExist:
         patient = None
-    
+
     if patient == None:
         return HttpResponseRedirect(reverse('access-restricted'))
-    
+
     patientUser = User.objects.get(id = patient.user_ID.id)
 
     if request.method == 'POST':
@@ -406,9 +405,9 @@ def getPatientDashboard(request):
 
     htmltable=list()
     for df in datframelist:
-        df.rename(columns=lambda x: "Week "+str(x), inplace=True)
+        df.rename(columns=lambda x: " ہفتہ : "+str(x), inplace=True)
         #df.index=range(0,len(index)+1,1)
-        df.rename(index=lambda x: "Item " + str(x), inplace=True)
+        df.rename(index=lambda x: get_object_or_404(Item,pk=x).Name + " : آئٹم  ", inplace=True)
         htmltable.append(df.to_html(justify='justify-all',classes='table table-striped table-hover table-bordered'))
 
     name_table_list = zip(tracknames,htmltable)
@@ -416,6 +415,7 @@ def getPatientDashboard(request):
     context = {
         "name": patient.Name,
         "sidebarOptions" : patientOptions,
+        "heading" : "میری پیشرفت اور ٹریک",
         "patient" : patient,
         "patientTracks" : patientTracks,
         "name_table": name_table_list
@@ -471,7 +471,7 @@ def viewPatientLogs(request,pk):
         patient = Patient.objects.get(pk=pk, Therapist = therapist)
     except Patient.DoesNotExist:
         patient = None
-    
+
     if patient == None:
         return HttpResponseRedirect(reverse('access-restricted'))
     patientLogs = PatientLog.objects.filter(user_ID = patient)
@@ -494,7 +494,7 @@ def markLogRead(request,pk,log_pk):
         patient = Patient.objects.get(pk=pk, Therapist = therapist)
     except Patient.DoesNotExist:
         patient = None
-    
+
     if patient == None:
         return HttpResponseRedirect(reverse('access-restricted'))
     log = get_object_or_404(PatientLog,pk=log_pk)
@@ -544,6 +544,7 @@ def viewItem(request):
         'heading': 'Item View/Edit',
         'name': therapist.Name,
         'sidebarOptions': therapistOptions,
+        'nUnread': therapist.getNumberOfUnreadLogs(),
         'all': all_Item,
         'therapistid':therapist.id
     }
@@ -570,6 +571,7 @@ def updateItem(request,pk):
         'heading': 'Item Edit',
         'name': therapist.Name,
         'sidebarOptions': therapistOptions,
+        'nUnread': therapist.getNumberOfUnreadLogs(),
         'form': form,
         'itempk':pk
     }
@@ -581,13 +583,17 @@ def deleteItem(request,pk):
     deleteitem=Item.objects.get(pk=pk)
     if deleteitem.user_ID != therapist:
         return HttpResponseRedirect(reverse('access-restricted'))
-    os.remove(os.path.join(BASE_DIR,str(deleteitem.FilePath)))
-    deleteitem.delete()
+    try:
+        os.remove(os.path.join(BASE_DIR,str(deleteitem.FilePath)))
+        deleteitem.delete()
+    except:
+        deleteitem.delete()
 
     context = {
         'heading': 'Item View/Edit',
         'name': therapist.Name,
         'sidebarOptions': therapistOptions,
+        'nUnread': therapist.getNumberOfUnreadLogs(),
         'all': all_Item,
         'therapistid': therapist.id
     }
@@ -651,7 +657,8 @@ def makeTrack(request):
         'heading': 'Make a Track',
         'name': therapist.Name,
         'sidebarOptions': therapistOptions,
-        'form' : form
+        'form' : form,
+        'nUnread': therapist.getNumberOfUnreadLogs()
     }
 
     return render(request, 'sehatagahiapp/therapist-track-name.html', context)
@@ -675,7 +682,8 @@ def addRemoveItem(request, track_pk):
         'sidebarOptions': therapistOptions,
         'trackItems' : trackItems,
         'items' : items,
-        'track_pk' : track_pk
+        'track_pk' : track_pk,
+        'nUnread': therapist.getNumberOfUnreadLogs()
     }
     return render(request, 'sehatagahiapp/therapist-add-remove-items.html', context)
 
@@ -708,7 +716,8 @@ def getEditTracksPage(request):
         'heading': "My Tracks",
         'name': therapist.Name,
         'sidebarOptions': therapistOptions,
-        'myTracks' : therapistTracks
+        'myTracks' : therapistTracks,
+        'nUnread': therapist.getNumberOfUnreadLogs()
     }
 
     return render(request, 'sehatagahiapp/therapist-view-edit-tracks.html', context)
@@ -736,7 +745,8 @@ def renameTrack(request,track_pk):
         'name': therapist.Name,
         'sidebarOptions': therapistOptions,
         'track' : track,
-        'form' : form
+        'form' : form,
+        'nUnread': therapist.getNumberOfUnreadLogs()
     }
 
     return render(request, 'sehatagahiapp/therapist-rename-track.html', context)
@@ -754,7 +764,8 @@ def getTracksToAssign(request, patient_pk):
         'name': therapist.Name,
         'sidebarOptions': therapistPatientOptions,
         'tracks' : all_tracks,
-        'patient_pk' : patient_pk
+        'patient' : patient,
+        'nUnread': therapist.getNumberOfUnreadLogs()
     }
 
     return render(request, 'sehatagahiapp/therapist-choose-track.html', context)
@@ -791,7 +802,8 @@ def assignTracktoPatient(request,patient_pk,track_pk):
         'patient' : patient,
         'track' : track,
         'trackItems' : trackItems,
-        'form' : form
+        'form' : form,
+        'nUnread': therapist.getNumberOfUnreadLogs()
     }
 
     return render(request, 'sehatagahiapp/therapist-assign-track.html', context)

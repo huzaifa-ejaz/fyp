@@ -3,18 +3,19 @@
 
 {% block sidebar %}
               {% for link, option in sidebarOptions.items %}
-              <li class="nav-item"><a href="{% url link %}" class="text-reset text-decoration-none">{{option}}</a></li>
+              <!--<li class="nav-item"><a href="{% url link %}" class="text-reset text-decoration-none">{{option}}</a></li>-->
+              <button class="btn btn-outline-success shadow p-3 mb-3" type="button"><a href="{% url link %}" class="text-white text-decoration-none">{{option}}</a></button>
               {% endfor %}
 {% endblock %}
 
 {% block content %}
 <div class="alert alert-warning">
-  <p>نیچے موجود چارٹ آپ کو دکھاتا ہے کہ آپ نے ایک ورزش ایک ہفتے میں کتنی دفعہ کری</p>
+  <p class="text-end">نیچے موجود چارٹ آپ کو دکھاتا ہے کہ آپ نے ایک ورزش ایک ہفتے میں کتنی دفعہ کری</p>
 </div>
-<div>
-<h2>میری موجودہ پیشرفت</h2>
+<div class="border rounded bg-light m-5 p-5">
+<h3 class="text-end mb-3">میری موجودہ پیشرفت</h3>
 {% for name,t in name_table %}
-<h5>Track: {{ name }} <!--{{forloop.counter}}--></h5>
+<h5 class="text-end">{{ name }}  ٹریک</h5>
 {% autoescape off %}
 {{t}}
 <br>
@@ -22,14 +23,15 @@
 {% endfor %}
 </div>
 
-<h2>میرا ٹریک</h2>
+<h3 class="text-end mb-3 mx-5">میرا ٹریک</h3>
 {% for patientTrack in patientTracks %}
-<h4>{{ patientTrack.Track_ID.Name }}</h4>
 
 
-<div class="container border rounded bg-light mr-5 p-3">
+
+<div class="border rounded bg-light m-5 p-5">
+    <h3 class="text-end">{{ patientTrack.Track_ID.Name }}</h3>
     <div class = "row">
-        <h6>Items in this Track</h6>
+        <h5 class="text-end">:اس ٹریک میں اشیا</h5>
     </div>
     <div class= "row ">
     {% for x in patientTrack.Track_ID.Items.all %}
@@ -48,7 +50,7 @@
          <a class="btn btn-success" href="{{x.FilePath.url}}" role="button" target="_blank" rel="noopener noreferrer">دیکھیں</a>
         <a class="btn btn-warning" href="{{x.FilePath.url}}" role="button" DOWNLOAD>ڈاؤن لوڈ کریں</a>
          <a class="btn btn-warning" href="{% url 'update-progress' x.pk patientTrack.pk %}" role="button">ورزش ہو گئی</a>
-  
+
   
   
         {% elif x.Type == '3' %}
@@ -56,7 +58,7 @@
          <a class="btn btn-success" href="{{x.FilePath.url}}" role="button" target="_blank" rel="noopener noreferrer">دیکھیں</a>
         <a class="btn btn-warning" href="{{x.FilePath.url}}" role="button" DOWNLOAD>ڈاؤن لوڈ کریں</a>
          <a class="btn btn-warning" href="{% url 'update-progress' x.pk patientTrack.pk %}" role="button">ورزش ہو گئی</a>
-  
+
   
         {% endif %}
       </div>
@@ -81,7 +83,7 @@
          <a class="btn btn-success" href="{{x.FilePath.url}}" role="button" target="_blank" rel="noopener noreferrer">دیکھیں</a>
         <a class="btn btn-warning" href="{{x.FilePath.url}}" role="button" DOWNLOAD>ڈاؤن لوڈ کریں</a>
          <a class="btn btn-warning" href="{% url 'update-progress' x.pk patientTrack.pk %}" role="button">ورزش ہو گئی</a>
-  
+
         {% elif x.Type == '3' %}
         <a href="{{x.FilePath.url}}" role="button" target="_blank" rel="noopener noreferrer"><img src="{% static 'sehatagahiapp/document_icon.png' %}" height="100%" width="100%"></a>
          <a class="btn btn-success" href="{{x.FilePath.url}}" role="button" target="_blank" rel="noopener noreferrer">دیکھیں</a>
