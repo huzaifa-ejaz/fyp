@@ -533,7 +533,6 @@ def markUnreadLogRead(request,log_pk):
 
     return HttpResponseRedirect(reverse('view-unread-logs'))
 
-#*******************************************************need to set url restrictions for below views****************
 
 @login_required
 def viewItem(request):
@@ -584,7 +583,7 @@ def deleteItem(request,pk):
     if deleteitem.user_ID != therapist:
         return HttpResponseRedirect(reverse('access-restricted'))
     try:
-        os.remove(os.path.join(BASE_DIR,str(deleteitem.FilePath)))
+        os.remove(os.path.join(settings.MEDIA_ROOT,str(deleteitem.FilePath)))
         deleteitem.delete()
     except:
         deleteitem.delete()
@@ -594,10 +593,9 @@ def deleteItem(request,pk):
         'name': therapist.Name,
         'sidebarOptions': therapistOptions,
         'nUnread': therapist.getNumberOfUnreadLogs(),
-        'all': all_Item,
         'therapistid': therapist.id
     }
-    return render(request, 'sehatagahiapp/Item-view.html', context)
+    return HttpResponseRedirect(reverse('view-item'))
 
 def viewreport(request,pk):
     therapist = request.user.getTherapist()
