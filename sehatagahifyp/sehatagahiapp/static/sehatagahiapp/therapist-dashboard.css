@@ -1,0 +1,54 @@
+
+.therapist-sidebar-button{
+  border-radius: 25px;
+  border: 2px solid #f8f9fa;
+}
+.sidebarOptionImage{
+  border-radius: 8px;
+  bottom:2px;
+  position: relative;
+  float:left;
+}
+.patient-button{
+  border-radius: 15px;
+  border: 2px solid #f8f9fa;
+  background-color:#52b788;
+}
+.brandImage{
+    height: 40px;
+
+}
+.patient-card{
+  border-radius: 15px;
+
+}
+.Avatar{
+border-radius: 8px;
+height: 100px;
+}
+body {
+  min-height: 100%;
+  display: grid;
+  grid-template-rows: 1fr auto;
+}
+html {
+  height: 100%;
+}
+.footer-dashboard {
+   width: 100%;
+   background-color: #52b788;
+   color: white;
+   text-align: center;
+    grid-row-start: 2;
+  grid-row-end: 3;
+  margin-top: 10px;
+}
+.fa-bars{
+ color: white;
+}
+.navbar-toggler:focus,
+.navbar-toggler:active,
+.navbar-toggler-icon:focus {
+    outline: none;
+    box-shadow: none;
+}
