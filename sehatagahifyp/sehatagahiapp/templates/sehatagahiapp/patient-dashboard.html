@@ -4,12 +4,12 @@
 {% block sidebar %}
               {% for link, option in sidebarOptions.items %}
               <!--<li class="nav-item"><a href="{% url link %}" class="text-reset text-decoration-none">{{option}}</a></li>-->
-              <button class="btn btn-outline-success shadow p-3 mb-3" type="button"><a href="{% url link %}" class="text-white text-decoration-none">{{option}}</a></button>
-              {% endfor %}
+             <button class="btn shadow p-3 mb-3 mx-3 therapist-sidebar-button" type="button"><img src="{% static 'sehatagahiapp/'%}{{link}}.png " height="30px" class="sidebarOptionImage" ><a href="{% url link %}" class="text-white text-decoration-none"> {{option}}</a></button>
+ {% endfor %}
 {% endblock %}
 
 {% block content %}
-<div class="alert alert-warning">
+<div class="alert alert-warning m-5 p-5">
   <p class="text-end">نیچے موجود چارٹ آپ کو دکھاتا ہے کہ آپ نے ایک ورزش ایک ہفتے میں کتنی دفعہ کری</p>
 </div>
 <div class="border rounded bg-light m-5 p-5">
@@ -36,8 +36,8 @@
     <div class= "row ">
     {% for x in patientTrack.Track_ID.Items.all %}
   
-    {% if forloop.counter|divisibleby:4 %}
-      <div class="col-md-3 col-sm-12 my-3">
+    {% if forloop.counter|divisibleby:3 %}
+      <div class="col-md-4 col-sm-12 my-3">
         <div>
           <p class="fw-bold">{{x.Name}}</p>
         {% if  x.Type == '1' %}
@@ -68,7 +68,7 @@
       <div class="row ">
       {% endif %}
     {% else %}
-      <div class="col-md-3 col-sm-12 my-3">
+      <div class="col-md-4 col-sm-12 my-3">
         <div>
           <p class="fw-bold">{{x.Name}}</p>
       {% if  x.Type == '1' %}
@@ -97,8 +97,8 @@
     <div class="row">
     </div>
     </div>
-    <h4>ہدایات</h4>
-    <div>
+    <h4 class="text-end">:ہدایات</h4>
+    <div class="text-end">
       {{patientTrack.Notes}}
     </div>
 </div>

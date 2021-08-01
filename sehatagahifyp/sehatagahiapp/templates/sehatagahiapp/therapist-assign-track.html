@@ -10,8 +10,10 @@
 {% block sidebar %}
               {% for link, option in sidebarOptions.items %}
               <!--<li class="nav-item"><a href="{% url link patient.pk %}" class="text-reset text-decoration-none">{{option}}</a></li>-->
-              <button class="btn btn-outline-success shadow p-3 mb-3" type="button"><a href="{% url link patient.pk %}" class="text-white text-decoration-none">{{option}}</a></button>
-              {% endfor %}
+              <button class="btn shadow p-3 mb-3 mx-3 therapist-sidebar-button" type="button"><img src="{% static 'sehatagahiapp/'%}{{link}}.png " height="30px" class="sidebarOptionImage" ><a href="{% url link patient.pk %}" class="text-white text-decoration-none"> {{option}}</a></button>
+ {% endfor %}
+<button class="btn shadow p-3 mb-3 mx-3 therapist-sidebar-button" type="button"><img src="{% static 'sehatagahiapp/'%}therapist-dashboard.png " height="30px" class="sidebarOptionImage" ><a href="{% url 'therapist-dashboard' %}" class="text-white text-decoration-none">Return to Dashboard</a></button>
+
 {% endblock %}
 
 {% block content %}

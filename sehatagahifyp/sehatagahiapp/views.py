@@ -18,9 +18,9 @@ therapistOptions = {
     'add-patient' : "Add New Patient",
     'item-upload' : "Upload an Item",
     'view-item' : "View/Edit Item",
-    'therapist-dashboard' : "Return to Dashboard",
     'make-track': "Make a Track",
-    'view-edit-tracks' : "View/Edit My Tracks"
+    'view-edit-tracks' : "View/Edit My Tracks",
+    'therapist-dashboard' : "Return to Dashboard"
 
 
 }
@@ -28,11 +28,12 @@ therapistOptions = {
 
 therapistPatientOptions = {
     'edit-patient' : "Edit Patient Details",
-    'therapist-patient-page' : "Return to Patient's Page",
     'change-patient-password' : "Change Patient's Password",
     'view-logs' : "View Patient's Logs",
     'view-report':"View Reports",
-    'choose-track' : "Assign a Track to Patient"
+    'choose-track' : "Assign a Track to Patient",
+    'therapist-patient-page' : "Return to Patient's Page"
+   # 'therapist-dashboard' : "Return to Dashboard"
 }
 
 patientOptions = {
@@ -853,7 +854,8 @@ def viewVideoItem(request,item_pk):
         'heading' : f'View: {video.Name}',
         'name' : therapist.Name,
         'sidebarOptions' : therapistOptions,
-        'video' : video
+        'video' : video,
+        'nUnread': therapist.getNumberOfUnreadLogs()
     }
     
     return render(request, 'sehatagahiapp/therapist-view-video.html', context)
